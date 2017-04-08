@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Mendefinisikan button saat di klik -->
+    <item android:drawable="@drawable/logo_utama"
+        android:state_pressed="true" />
+
+    <!-- Mendefinisikan button saat terfokus -->
+    <item android:drawable="@drawable/logo_utama"
+        android:state_focused="true" />
+
+    <!-- Mendefinisikan button saat dalam kondisi normal -->
+    <item android:drawable="@drawable/logo_utama" />
+
+    <!-- Mendefinisikan button saat di klik -->
+    <item android:drawable="@drawable/menu_logo"
+        android:state_pressed="true" />
+
+    <!-- Mendefinisikan button saat terfokus -->
+    <item android:drawable="@drawable/menu_logo"
+        android:state_focused="true" />
+
+    <!-- Mendefinisikan button saat dalam kondisi normal -->
+    <item android:drawable="@drawable/menu_logo" />
+
+    <!-- Mendefinisikan button saat di klik -->
+    <item android:drawable="@drawable/pull_data_push"
+        android:state_pressed="true" />
+
+    <!-- Mendefinisikan button saat terfokus -->
+    <item android:drawable="@drawable/pull_data_push"
+        android:state_focused="true" />
+
+    <!-- Mendefinisikan button saat dalam kondisi normal -->
+    <item android:drawable="@drawable/pull_data" />
+</selector>
