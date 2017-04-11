@@ -90,4 +90,22 @@ public class DBHandlerRAA extends DBHandlerSQLite {
         // return
         return objects;
     }
+
+    // Getting one raa
+    public RAAModel getRAAforRAAActual(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String getRAAQuery = "SELECT * FROM " + TABLE_RAA +
+                " INNER JOIN " + TABLE_LOCATION +
+                " ON " + KEY_ID + " = " + KEY_IRLOCATIONID +
+                " WHERE IRAssetNo = " + id;
+
+        Cursor cursor = db.rawQuery(getRAAQuery, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        RAAModel raa = new RAAModel(cursor.getInt(0), cursor.getInt(1), cursor.getString(2), cursor.getString(3), cursor.getInt(4), cursor.getString(5), cursor.getString(6), cursor.getInt(7));
+
+        // return
+        return raa;
+    }
 }
