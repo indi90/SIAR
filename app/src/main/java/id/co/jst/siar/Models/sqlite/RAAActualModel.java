@@ -7,7 +7,7 @@ package id.co.jst.siar.Models.sqlite;
 public class RAAActualModel {
     private int IRPeriodID;
     private int IRAssetNo;
-    private int IRModel;
+    private String IRModel;
     private String IRMFGNo;
     private int IRLocationID;
     private String IRGenerateDate;
@@ -18,7 +18,7 @@ public class RAAActualModel {
     {
     }
 
-    public RAAActualModel(int IRPeriodID, int IRAssetNo, int IRModel, String IRMFGNo, int IRLocationID, String IRGenerateDate, String IRGenerateUser, int IRDeptCode)
+    public RAAActualModel(int IRPeriodID, int IRAssetNo, String IRModel, String IRMFGNo, int IRLocationID, String IRGenerateDate, String IRGenerateUser, int IRDeptCode)
     {
         this.IRPeriodID = IRPeriodID;
         this.IRAssetNo = IRAssetNo;
@@ -39,7 +39,7 @@ public class RAAActualModel {
         this.IRAssetNo = IRAssetNo;
     }
 
-    public void setIRModel(int IRModel) {
+    public void setIRModel(String IRModel) {
         this.IRModel = IRModel;
     }
 
@@ -51,22 +51,21 @@ public class RAAActualModel {
         this.IRLocationID = IRLocationID;
     }
 
+    public void setIRGenerateDate(String IRGenerateDate) { this.IRGenerateDate = IRGenerateDate; }
+
     public void setIRGenerateUser(String IRGenerateUser) {
         this.IRGenerateUser = IRGenerateUser;
     }
 
     public void setIRDeptCode(int IRDeptCode) { this.IRDeptCode = IRDeptCode; }
 
+
     // GET Method
     public int getIRPeriodID() { return IRPeriodID; }
 
-    public int getIRAssetNo() {
-        return IRAssetNo;
-    }
+    public int getIRAssetNo() { return IRAssetNo; }
 
-    public int getIRModel() {
-        return IRModel;
-    }
+    public String getIRModel() { return IRModel; }
 
     public String getIRMFGNo() {
         return IRMFGNo;
@@ -75,6 +74,8 @@ public class RAAActualModel {
     public int getIRLocationID() {
         return IRLocationID;
     }
+
+    public String getIRGenerateDate() { return IRGenerateDate; }
 
     public String getIRGenerateUser() { return IRGenerateUser; }
 

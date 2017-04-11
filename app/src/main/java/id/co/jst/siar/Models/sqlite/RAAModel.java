@@ -63,9 +63,7 @@ public class RAAModel {
     // GET Method
     public int getIRPeriodID() { return IRPeriodID; }
 
-    public int getIRAssetNo() {
-        return IRAssetNo;
-    }
+    public int getIRAssetNo() { return IRAssetNo; }
 
     public String getIRModel() { return IRModel; }
 
