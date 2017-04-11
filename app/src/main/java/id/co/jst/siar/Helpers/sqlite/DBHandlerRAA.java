@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import id.co.jst.siar.Models.sqlite.LocationModel;
 import id.co.jst.siar.Models.sqlite.RAAModel;
 
 /**
@@ -63,5 +64,30 @@ public class DBHandlerRAA extends DBHandlerSQLite {
 
         // return count
 //        return cursor.getCount();
+    }
+
+    // Getting one raa
+    public Object[] getRAA(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String getRAAQuery = "SELECT " + KEY_IRASSETNO + ", " + KEY_IRMODEL + ", " + KEY_IRMFGNO + ", " + KEY_PLACE + " FROM " + TABLE_RAA +
+                " INNER JOIN " + TABLE_LOCATION +
+                " ON " + KEY_ID + " = " + KEY_IRLOCATIONID +
+                " WHERE IRAssetNo = " + id;
+
+        Cursor cursor = db.rawQuery(getRAAQuery, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        Object objects[] = new Object[2];
+        RAAModel raa = new RAAModel();
+        LocationModel location = new LocationModel();
+        raa.setIRAssetNo(cursor.getInt(0));
+        raa.setIRModel(cursor.getString(1));
+        raa.setIRMFGNo(cursor.getString(2));
+        location.setPl_place(cursor.getString(3));
+        objects[0] = raa;
+        objects[1] = location;
+        // return
+        return objects;
     }
 }
