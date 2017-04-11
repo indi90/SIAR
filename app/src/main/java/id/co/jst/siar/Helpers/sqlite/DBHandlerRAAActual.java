@@ -1,9 +1,13 @@
 package id.co.jst.siar.Helpers.sqlite;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import id.co.jst.siar.Models.sqlite.RAAActualModel;
+import id.co.jst.siar.Models.sqlite.RAAModel;
 
 /**
  * Created by endro.ngujiharto on 4/7/2017.
@@ -15,28 +19,21 @@ public class DBHandlerRAAActual extends DBHandlerSQLite {
         super(context);
     }
 
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-        String CREATE_CONTACTS_TABLE = "CREATE TABLE " + TABLE_RAAACTUAL + " ("
-                + KEY_IRPERIODID + " INTEGER,"
-                + KEY_IRASSETNO + " INTEGER,"
-                + KEY_IRMODEL + " TEXT,"
-                + KEY_IRMFGNO + " VARCHAR,"
-                + KEY_IRLOCATIONID + " INTEGER,"
-                + KEY_IRGENERATEDATE + " DATE,"
-                + KEY_IRGENERATEUSER + " VARCHAR,"
-                + KEY_IRDEPTCODE + " INTEGER,"
-                + "PRIMARY KEY ("+ KEY_IRPERIODID +", "+ KEY_IRASSETNO +")"
-                + ")";
-        db.execSQL(CREATE_CONTACTS_TABLE);
-    }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Drop older table if existed
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_RAAACTUAL);
-        // Creating tables again
-        onCreate(db);
+    // Adding new RAAActual
+    public void addRAAActual(RAAActualModel raaActual) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_IRPERIODID, raaActual.getIRAssetNo());
+        values.put(KEY_IRASSETNO, raaActual.getIRAssetNo());
+        values.put(KEY_IRMODEL, raaActual.getIRModel());
+        values.put(KEY_IRMFGNO, raaActual.getIRMFGNo());
+        values.put(KEY_IRLOCATIONID, raaActual.getIRLocationID());
+        values.put(KEY_IRGENERATEDATE, raaActual.getIRGenerateDate().toString());
+        values.put(KEY_IRGENERATEUSER, raaActual.getIRGenerateUser());
+        values.put(KEY_IRDEPTCODE, raaActual.getIRDeptCode());
+        // Inserting Row
+        db.insert(super.TABLE_RAA, null, values);
+        db.close(); // Closing database connection
     }
 
     // Getting RAA Count
