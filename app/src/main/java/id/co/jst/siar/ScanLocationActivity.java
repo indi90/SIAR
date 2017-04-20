@@ -1,6 +1,8 @@
 package id.co.jst.siar;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -14,15 +16,25 @@ import com.google.zxing.integration.android.IntentIntegrator;
 public class ScanLocationActivity extends AppCompatActivity {
     public Button btn_next, btn_scan;
     public EditText location_barcode;
+    SessionManager session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan_location);
 
+        session = new SessionManager(getApplicationContext());
+
         btn_next = (Button)findViewById(R.id.button2);
         btn_scan = (Button)findViewById(R.id.button);
         location_barcode = (EditText)findViewById(R.id.editText);
+
+        final ProgressDialog pdg = new ProgressDialog(ScanLocationActivity.this);
+        pdg.setIndeterminate(true);
+        pdg.setInverseBackgroundForced(false);
+        pdg.setCanceledOnTouchOutside(true);
+        pdg.setMessage("Please Wait ...");
+        pdg.setCancelable(false);
 
         btn_scan.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -37,9 +49,26 @@ public class ScanLocationActivity extends AppCompatActivity {
         btn_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), InventoryActivity.class);
-                startActivity(i);
-                ScanLocationActivity.this.finish();
+            if (location_barcode.getText().toString().isEmpty()){
+                Toast.makeText(ScanLocationActivity.this, "Barcode lokasi harus diisi.",Toast.LENGTH_LONG).show();
+            } else {
+                pdg.show();
+                session.createLocationSession(location_barcode.getText().toString().substring(3).replace("0", ""), ScanLocationActivity.this);
+                new AsyncTask<Void, Void, Void>() {
+                    protected Void doInBackground(Void... params) {
+                        pdg.dismiss();
+                        runOnUiThread(new Runnable(){
+                            @Override
+                            public void run(){
+                            Intent i = new Intent(getApplicationContext(), InventoryActivity.class);
+                            startActivity(i);
+                            ScanLocationActivity.this.finish();
+                            }
+                        });
+                        return null;
+                    }
+                }.execute();
+            }
             }
         });
     }
