@@ -25,6 +25,7 @@ public class DBHandlerLocations extends DBHandlerSQLite{
     public void addLocation(LocationModel location) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+        values.put(KEY_ID, location.getPl_code());
         values.put(KEY_BUILDING, location.getPl_building());
         values.put(KEY_FLOOR, location.getPl_floor());
         values.put(KEY_PLACE, location.getPl_place());
@@ -51,6 +52,21 @@ public class DBHandlerLocations extends DBHandlerSQLite{
 
         // return count
         return cursor.getCount();
+    }
+
+    // Getting location
+    public LocationModel getLocation(String pl_code) {
+        String query = "SELECT * FROM " + TABLE_LOCATION + " WHERE pl_code = " + pl_code;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        LocationModel location = new LocationModel(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5));
+
+        // return count
+        return location;
     }
 
     // Truncate Location

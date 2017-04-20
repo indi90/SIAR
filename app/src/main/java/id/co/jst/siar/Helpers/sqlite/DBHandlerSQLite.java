@@ -15,7 +15,7 @@ public class DBHandlerSQLite extends SQLiteOpenHelper {
     // Database Version
     private static final int DATABASE_VERSION = 1;
     // Database Name
-    private static final String DATABASE_NAME = "SIAR";
+    private static final String DATABASE_NAME = "SIAR.db";
     // Location table name
     protected static final String TABLE_LOCATION = "Locations";
     // Location Table Columns names

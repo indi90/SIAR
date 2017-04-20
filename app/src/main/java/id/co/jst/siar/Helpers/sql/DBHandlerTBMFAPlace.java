@@ -41,7 +41,7 @@ public class DBHandlerTBMFAPlace {
         String countQuery = "SELECT COUNT(*) FROM " + TABLE;
         if (connect == null)
         {
-            z = "Check Your Internet Access!";
+            z = "Check Your Connection!";
             Toast.makeText(activity, z, Toast.LENGTH_LONG).show();
         } else {
             try {
@@ -86,7 +86,7 @@ public class DBHandlerTBMFAPlace {
         String z = "";
         if (connect == null)
         {
-            z = "Check Your Internet Access!";
+            z = "Check Your Connection!";
             Toast.makeText(activity, z, Toast.LENGTH_LONG).show();
         } else {
             try {
@@ -107,7 +107,6 @@ public class DBHandlerTBMFAPlace {
                 Toast.makeText(activity, e.getMessage().toString(), Toast.LENGTH_LONG).show();
             }
         }
-
 
         // return contact list
         return placeList;

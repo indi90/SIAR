@@ -1,8 +1,6 @@
 package id.co.jst.siar.Helpers.sql;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.sql.Connection;
@@ -25,8 +23,7 @@ public class DBHandlerTINV_RAA {
 
     private Connection connect;
     private ResultSet rs;
-    private ProgressDialog mDialog;
-    private  DBHandlerConnection sqlConnect = new DBHandlerConnection();
+    private DBHandlerConnection sqlConnect = new DBHandlerConnection();
 
     // Getting locations Count
     public int getRAACount(Context activity) {
@@ -37,7 +34,7 @@ public class DBHandlerTINV_RAA {
         String countQuery = "SELECT COUNT(*) FROM " + TABLE + " WHERE IRDeptCode = 7";
         if (connect == null)
         {
-            z = "Check Your Internet Access!";
+            z = "Check Your Connection!";
             Toast.makeText(activity, z, Toast.LENGTH_LONG).show();
         } else {
             try {
@@ -74,15 +71,19 @@ public class DBHandlerTINV_RAA {
     }
 
     // Getting All Locations
-    public List<TINV_RAAModel> getAllRAA(Context activity) {
+    public List<TINV_RAAModel> getAllRAA(String emplcode, Context activity) {
         List<TINV_RAAModel> RAAList = new ArrayList<TINV_RAAModel>();
         connect = sqlConnect.connect(DATABASE_NAME);
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE + " WHERE IRDeptCode = 7";
+        String selectQuery = "SELECT * FROM " + TABLE + " WHERE IRDeptCode = (SELECT Section_ID" +
+                "  FROM TBMST_Section INNER JOIN  TBMST_SectionDet" +
+                "  ON Section_ID = SED_HeaderID INNER JOIN jincommon..tbmst_employee" +
+                "  ON em_sectioncode = sed_sectioncode" +
+                "  WHERE em_emplcode = " + emplcode + ")";
         String z = "";
         if (connect == null)
         {
-            z = "Check Your Internet Access!";
+            z = "Check Your Connection!";
             Toast.makeText(activity, z, Toast.LENGTH_LONG).show();
         } else {
             try {
