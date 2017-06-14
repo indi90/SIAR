@@ -6,8 +6,6 @@ System Inventory RAA for PT. JST Indoensia
 
 A step by step for use this repository
 
-Clone
-
 ```
 git clone git@gitlab.jst.co.id:JIN-MobileApps/SIAR.git SIAR
 ```
