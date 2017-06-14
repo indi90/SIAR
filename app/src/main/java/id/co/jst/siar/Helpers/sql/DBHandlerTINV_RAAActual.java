@@ -60,7 +60,11 @@ public class DBHandlerTINV_RAAActual {
                 connect.close();
                 kembali = new String[]{""};
             } catch (SQLException e) {
-                message = e.getMessage();
+                if (e.getErrorCode() == 2627){
+                    message = "";
+                } else {
+                    message = e.getMessage();
+                }
                 kembali = new String[]{message};
 //                Log.d("Reading: ", "Count Test ..." + e.getMessage().toString());
 //                Toast.makeText(activity, e.getMessage().toString(), Toast.LENGTH_LONG).show();

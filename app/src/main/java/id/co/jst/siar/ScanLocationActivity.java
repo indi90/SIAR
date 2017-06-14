@@ -53,7 +53,8 @@ public class ScanLocationActivity extends AppCompatActivity {
                 Toast.makeText(ScanLocationActivity.this, "Barcode lokasi harus diisi.",Toast.LENGTH_LONG).show();
             } else {
                 pdg.show();
-                session.createLocationSession(location_barcode.getText().toString().substring(3).replace("0", ""), ScanLocationActivity.this);
+                int tmp = Integer.parseInt(location_barcode.getText().toString().substring(3));
+                session.createLocationSession(Integer.toString(tmp), ScanLocationActivity.this);
                 new AsyncTask<Void, Void, Void>() {
                     protected Void doInBackground(Void... params) {
                         pdg.dismiss();
