@@ -17,7 +17,12 @@ import android.widget.Toast;
 import com.facebook.stetho.Stetho;
 import com.google.zxing.integration.android.IntentIntegrator;
 
+import id.co.jst.siar.Helpers.Helpers;
+
+import java.net.NetworkInterface;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     public Button btn_submit_pic, btn_scan_barcode;
@@ -42,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
         pdg.setCanceledOnTouchOutside(true);
         pdg.setMessage("Please Wait ...");
         pdg.setCancelable(false);
+
+//        Toast.makeText(MainActivity.this, Helpers.getMAC(),Toast.LENGTH_LONG).show();
 
         btn_scan_barcode.setOnClickListener(new View.OnClickListener() {
             @Override
