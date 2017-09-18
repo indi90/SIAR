@@ -58,11 +58,6 @@ public class DBHandlerRAAActual extends DBHandlerSQLite {
         String truncateQuery = "DELETE FROM " + TABLE_RAAACTUAL;
         SQLiteDatabase db = this.getReadableDatabase();
         db.execSQL(truncateQuery);
-//        Log.d("Reading: ", "Count Test ..." + rs.next());
-//        Cursor cursor = db.rawQuery(countQuery, null);
-
-        // return count
-//        return cursor.getCount();
     }
 
     // Getting All RAAActual

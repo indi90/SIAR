@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -20,10 +21,11 @@ public class ScanLocationActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan_location);
 
-        session = new SessionManager(getApplicationContext());
+        session = new SessionManager(this);
 
         btn_next = (Button)findViewById(R.id.button2);
         btn_scan = (Button)findViewById(R.id.button);
@@ -54,7 +56,7 @@ public class ScanLocationActivity extends AppCompatActivity {
             } else {
                 pdg.show();
                 int tmp = Integer.parseInt(location_barcode.getText().toString().substring(3));
-                session.createLocationSession(Integer.toString(tmp), ScanLocationActivity.this);
+                session.createLocationSession(Integer.toString(tmp));
                 new AsyncTask<Void, Void, Void>() {
                     protected Void doInBackground(Void... params) {
                         pdg.dismiss();

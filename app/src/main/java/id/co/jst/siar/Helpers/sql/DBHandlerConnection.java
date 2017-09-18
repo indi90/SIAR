@@ -15,9 +15,9 @@ import static android.R.attr.password;
 
 public class DBHandlerConnection {
     // Database Name
-    private static final String DATABASE_SERVER = "192.9.18.1";
-    private static final String DATABASE_USER = "gapura";
-    private static final String DATABASE_PASS = "gapura";
+    private static final String DATABASE_SERVER = "192.9.18.9";
+    private static final String DATABASE_USER = "rianty";
+    private static final String DATABASE_PASS = "rianty";
 
     public Connection connect(String database)
     {

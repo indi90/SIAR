@@ -22,6 +22,7 @@ import java.util.List;
 
 import id.co.jst.siar.Helpers.sqlite.DBHandlerRAA;
 import id.co.jst.siar.Helpers.sqlite.DBHandlerRAAActual;
+import id.co.jst.siar.Helpers.sqlite.DBHandlerRAAPeriod;
 import id.co.jst.siar.Models.sql.TINV_RAAModel;
 import id.co.jst.siar.Models.sqlite.LocationModel;
 import id.co.jst.siar.Models.sqlite.RAAActualModel;
@@ -30,9 +31,10 @@ import id.co.jst.siar.Models.sqlite.RAAModel;
 public class InventoryActivity extends AppCompatActivity {
     public Button btn_scan, btn_submit, btn_done;
     private EditText raa_barcode;
-    public TextView asset_number, model, serial_number, location, pic, locationActual;
+    public TextView asset_number, model, serial_number, location, pic, locationActual, balance;
     private DBHandlerRAA sqliteRAA = new DBHandlerRAA(this);
     private DBHandlerRAAActual sqliteRAAActual = new DBHandlerRAAActual(this);
+    private DBHandlerRAAPeriod sqliteRAAPeriod = new DBHandlerRAAPeriod(this);
     private Integer barcode;
     SessionManager session;
 
@@ -41,7 +43,7 @@ public class InventoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inventory);
 
-        session = new SessionManager(getApplicationContext());
+        session = new SessionManager(this);
         final HashMap<String, String> user = session.getUserDetails();
 
         pic = (TextView)findViewById(R.id.textView14);
@@ -54,7 +56,9 @@ public class InventoryActivity extends AppCompatActivity {
         btn_scan = (Button)findViewById(R.id.button8);
         btn_done = (Button)findViewById(R.id.button9);
         btn_submit = (Button)findViewById(R.id.button11);
+        balance = (TextView)findViewById(R.id.textView2);
 
+        balance.setText(user.get(SessionManager.KEY_REMAINS) + " of " + user.get(SessionManager.KEY_ALL));
         locationActual.setText(" " + user.get(SessionManager.KEY_LOCATION));
         pic.setText(" " + user.get(SessionManager.KEY_EMPLCODE) + " - " + user.get(SessionManager.KEY_NAME));
 
@@ -105,6 +109,7 @@ public class InventoryActivity extends AppCompatActivity {
                         return null;
                     }
                 }.execute();
+                session.createBalanceSession(user.get(SessionManager.KEY_EMPLCODE), sqliteRAAPeriod.checkPeriod(), true);
                 asset_number.setText("");
                 model.setText("");
                 serial_number.setText("");

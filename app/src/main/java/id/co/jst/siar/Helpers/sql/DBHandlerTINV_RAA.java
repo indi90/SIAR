@@ -25,13 +25,18 @@ public class DBHandlerTINV_RAA {
     private ResultSet rs;
     private DBHandlerConnection sqlConnect = new DBHandlerConnection();
 
-    // Getting locations Count
-    public int getRAACount(Context activity) {
+    // Getting Balance
+    public int getBalance(String emplcode, int period, Context activity) {
         int count = 0;
         String z = "";
 
         connect = sqlConnect.connect(DATABASE_NAME);
-        String countQuery = "SELECT COUNT(*) FROM " + TABLE + " WHERE IRDeptCode = 7";
+        String  countQuery = "SELECT count(*) FROM " + TABLE + " WHERE IRDeptCode = (SELECT Section_ID" +
+                "  FROM TBMST_Section INNER JOIN  TBMST_SectionDet" +
+                "  ON Section_ID = SED_HeaderID INNER JOIN jincommon..tbmst_employee" +
+                "  ON em_sectioncode = sed_sectioncode" +
+                "  WHERE em_emplcode = " + emplcode + "" +
+                "  AND IRPeriodID = " + period +")";
         if (connect == null)
         {
             z = "Check Your Connection!";
@@ -44,34 +49,47 @@ public class DBHandlerTINV_RAA {
                 rs.next();
                 count = rs.getInt(1);
                 connect.close();
-//                Log.d("Reading: ", "Count Test ..." + countQuery);
-//                            List<Map<String, String>> data = null;
-//                            data = new ArrayList<Map<String, String>>();
-                //
-//                            while (rs.next()) {
-//                                Map<String, String> datanum = new HashMap<String, String>();
-//                                datanum.put("A", rs.getString("PL_PLACE"));
-//                                Log.d("Reading: ", "Count Test ..." + rs.getString("PL_PLACE"));
-//                                data.add(datanum);
-//                            }
-                //            String[] fromwhere = { "A" };
-                //            int[] viewswhere = { R.id.lblcountryname };
-                //            ADAhere = new SimpleAdapter(CountryList.this, data,
-                //                    R.layout.listtemplate, fromwhere, viewswhere);
-                //            lstcountry.setAdapter(ADAhere);
-
             } catch (SQLException e) {
                 Toast.makeText(activity, e.getMessage().toString(), Toast.LENGTH_LONG).show();
             }
         }
-//        SQLiteDatabase db = this.getReadableDatabase();
-//        Cursor cursor = db.rawQuery(countQuery, null);
 
         return count;
     }
 
+    // Getting locations Count
+    public int getRAACount(String emplcode, int period, Context activity) {
+        int count = 0;
+        String z = "";
+
+        connect = sqlConnect.connect(DATABASE_NAME);
+        String countQuery = "SELECT COUNT(*) FROM " + TABLE + " WHERE IRDeptCode = (SELECT Section_ID" +
+                "  FROM TBMST_Section INNER JOIN  TBMST_SectionDet" +
+                "  ON Section_ID = SED_HeaderID INNER JOIN jincommon..tbmst_employee" +
+                "  ON em_sectioncode = sed_sectioncode" +
+                "  WHERE em_emplcode = " + emplcode + "" +
+                "  AND IRPeriodID = " + period +")";
+        if (connect == null)
+        {
+            z = "Check Your Connection!";
+            Toast.makeText(activity, z, Toast.LENGTH_LONG).show();
+        } else {
+            try {
+                Statement statement = connect.createStatement();
+                rs = statement.executeQuery(countQuery);
+                // return count
+                rs.next();
+                count = rs.getInt(1);
+                connect.close();
+            } catch (SQLException e) {
+                Toast.makeText(activity, e.getMessage().toString(), Toast.LENGTH_LONG).show();
+            }
+        }
+        return count;
+    }
+
     // Getting All Locations
-    public List<TINV_RAAModel> getAllRAA(String emplcode, Context activity) {
+    public List<TINV_RAAModel> getAllRAA(String emplcode, int period, Context activity) {
         List<TINV_RAAModel> RAAList = new ArrayList<TINV_RAAModel>();
         connect = sqlConnect.connect(DATABASE_NAME);
         // Select All Query
@@ -79,10 +97,10 @@ public class DBHandlerTINV_RAA {
                 "  FROM TBMST_Section INNER JOIN  TBMST_SectionDet" +
                 "  ON Section_ID = SED_HeaderID INNER JOIN jincommon..tbmst_employee" +
                 "  ON em_sectioncode = sed_sectioncode" +
-                "  WHERE em_emplcode = " + emplcode + ")";
+                "  WHERE em_emplcode = " + emplcode + "" +
+                "  AND IRPeriodID = " + period +")";
         String z = "";
-        if (connect == null)
-        {
+        if (connect == null) {
             z = "Check Your Connection!";
             Toast.makeText(activity, z, Toast.LENGTH_LONG).show();
         } else {

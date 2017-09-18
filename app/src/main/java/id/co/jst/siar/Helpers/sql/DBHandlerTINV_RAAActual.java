@@ -66,20 +66,21 @@ public class DBHandlerTINV_RAAActual {
                     message = e.getMessage();
                 }
                 kembali = new String[]{message};
-//                Log.d("Reading: ", "Count Test ..." + e.getMessage().toString());
-//                Toast.makeText(activity, e.getMessage().toString(), Toast.LENGTH_LONG).show();
             }
         }
         return kembali;
     }
 
-    // Getting locations Count
-    public int getRAAActualCount(Context activity) {
+    public int getBalance(String emplcode, Context activity) {
         int count = 0;
         String z = "";
 
         connect = sqlConnect.connect(DATABASE_NAME);
-        String countQuery = "SELECT COUNT(*) FROM " + TABLE + " WHERE IRDeptCode = 7";
+        String  countQuery = "SELECT count(*) FROM " + TABLE + " WHERE IRDeptCode = (SELECT Section_ID" +
+                "  FROM TBMST_Section INNER JOIN  TBMST_SectionDet" +
+                "  ON Section_ID = SED_HeaderID INNER JOIN jincommon..tbmst_employee" +
+                "  ON em_sectioncode = sed_sectioncode" +
+                "  WHERE em_emplcode = " + emplcode + ")";
         if (connect == null)
         {
             z = "Check Your Connection!";
@@ -92,38 +93,54 @@ public class DBHandlerTINV_RAAActual {
                 rs.next();
                 count = rs.getInt(1);
                 connect.close();
-//                Log.d("Reading: ", "Count Test ..." + countQuery);
-//                            List<Map<String, String>> data = null;
-//                            data = new ArrayList<Map<String, String>>();
-                //
-//                            while (rs.next()) {
-//                                Map<String, String> datanum = new HashMap<String, String>();
-//                                datanum.put("A", rs.getString("PL_PLACE"));
-//                                Log.d("Reading: ", "Count Test ..." + rs.getString("PL_PLACE"));
-//                                data.add(datanum);
-//                            }
-                //            String[] fromwhere = { "A" };
-                //            int[] viewswhere = { R.id.lblcountryname };
-                //            ADAhere = new SimpleAdapter(CountryList.this, data,
-                //                    R.layout.listtemplate, fromwhere, viewswhere);
-                //            lstcountry.setAdapter(ADAhere);
-
             } catch (SQLException e) {
                 Toast.makeText(activity, e.getMessage().toString(), Toast.LENGTH_LONG).show();
             }
         }
-//        SQLiteDatabase db = this.getReadableDatabase();
-//        Cursor cursor = db.rawQuery(countQuery, null);
 
         return count;
     }
 
+    // Getting locations Count
+    public int getRAAActualCount(String emplcode, Context activity) {
+        int count = 0;
+        String z = "";
+
+        connect = sqlConnect.connect(DATABASE_NAME);
+        String countQuery = "SELECT COUNT(*) FROM " + TABLE + " WHERE IRDeptCode = (SELECT Section_ID" +
+                "  FROM TBMST_Section INNER JOIN  TBMST_SectionDet" +
+                "  ON Section_ID = SED_HeaderID INNER JOIN jincommon..tbmst_employee" +
+                "  ON em_sectioncode = sed_sectioncode" +
+                "  WHERE em_emplcode = " + emplcode + ")";
+        if (connect == null)
+        {
+            z = "Check Your Connection!";
+            Toast.makeText(activity, z, Toast.LENGTH_LONG).show();
+        } else {
+            try {
+                Statement statement = connect.createStatement();
+                rs = statement.executeQuery(countQuery);
+                // return count
+                rs.next();
+                count = rs.getInt(1);
+                connect.close();
+            } catch (SQLException e) {
+                Toast.makeText(activity, e.getMessage().toString(), Toast.LENGTH_LONG).show();
+            }
+        }
+        return count;
+    }
+
     // Getting All RAAActual
-    public List<TINV_RAAActualModel> getAllRAAActual(Context activity) {
+    public List<TINV_RAAActualModel> getAllRAAActual(String emplcode, Context activity) {
         List<TINV_RAAActualModel> RAAActualList = new ArrayList<TINV_RAAActualModel>();
         connect = sqlConnect.connect(DATABASE_NAME);
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE + " WHERE IRDeptCode = 7";
+        String selectQuery = "SELECT * FROM " + TABLE + " WHERE IRDeptCode = (SELECT Section_ID" +
+                "  FROM TBMST_Section INNER JOIN  TBMST_SectionDet" +
+                "  ON Section_ID = SED_HeaderID INNER JOIN jincommon..tbmst_employee" +
+                "  ON em_sectioncode = sed_sectioncode" +
+                "  WHERE em_emplcode = " + emplcode + ")";
         String z = "";
         if (connect == null)
         {

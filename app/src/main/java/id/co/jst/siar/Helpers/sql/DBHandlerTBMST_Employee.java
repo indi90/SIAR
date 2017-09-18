@@ -40,16 +40,13 @@ public class DBHandlerTBMST_Employee {
             try {
                 Statement statement = connect.createStatement();
                 rs = statement.executeQuery(Query);
-                // return count
                 rs.next();
                 data[0] = rs.getString(1);
                 data[1] = rs.getString(2);
                 connect.close();
                 success = true;
             } catch (SQLException e) {
-//                Log.d("Error : ", e.getMessage());
                 message[0] = e.getMessage();
-//                Toast.makeText(activity, e.getMessage().toString(), Toast.LENGTH_LONG).show();
             }
         }
 

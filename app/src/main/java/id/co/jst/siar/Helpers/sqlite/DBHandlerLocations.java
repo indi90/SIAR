@@ -75,11 +75,6 @@ public class DBHandlerLocations extends DBHandlerSQLite{
         String truncateQuery = "DELETE FROM " + TABLE_LOCATION;
         SQLiteDatabase db = this.getReadableDatabase();
         db.execSQL(truncateQuery);
-//        Log.d("Reading: ", "Count Test ..." + rs.next());
-//        Cursor cursor = db.rawQuery(countQuery, null);
-
-        // return count
-//        return cursor.getCount();
     }
 
     // Getting All Locations

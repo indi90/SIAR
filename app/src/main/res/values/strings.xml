@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SIAR</string>
+    <string name="app_activity">Inventory</string>
 </resources>

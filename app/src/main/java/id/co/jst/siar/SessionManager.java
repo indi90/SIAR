@@ -9,8 +9,13 @@ import android.util.Log;
 import java.util.HashMap;
 
 import id.co.jst.siar.Helpers.sql.DBHandlerTBMST_Employee;
+import id.co.jst.siar.Helpers.sql.DBHandlerTINV_RAA;
+import id.co.jst.siar.Helpers.sql.DBHandlerTINV_RAAActual;
 import id.co.jst.siar.Helpers.sqlite.DBHandlerLocations;
+import id.co.jst.siar.Helpers.sqlite.DBHandlerRAAPeriod;
 import id.co.jst.siar.Models.sqlite.LocationModel;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by endro.ngujiharto on 4/18/2017.
@@ -42,6 +47,9 @@ public class SessionManager {
     public static final String KEY_LOCATION = "location";
     public static final String KEY_IDLOCATION = "IDlocation";
 
+    public static final String KEY_REMAINS = "remains";
+    public static final String KEY_ALL = "all";
+
     // Location (make variable public to access from outside)
     public static final String KEY_EMPLCODE = "emplcode";
 
@@ -57,10 +65,10 @@ public class SessionManager {
     /**
      * Create login session
      * */
-    public String createPICSession(String emplcode, Context context){
+    public String createPICSession(String emplcode){
         String[] employee;
 
-        employee = sqlEmployee.getEmployee(emplcode, context);
+        employee = sqlEmployee.getEmployee(emplcode, _context);
 
 //        Log.d("Message ", employee.length);
         if (employee.length < 2 ){
@@ -82,8 +90,8 @@ public class SessionManager {
         }
     }
 
-    public void createLocationSession(String locationID, Context context){
-        DBHandlerLocations sqliteLocation = new DBHandlerLocations(context);
+    public void createLocationSession(String locationID){
+        DBHandlerLocations sqliteLocation = new DBHandlerLocations(_context);
         LocationModel location;
 
         location = sqliteLocation.getLocation(locationID);
@@ -92,6 +100,30 @@ public class SessionManager {
         editor.putString(KEY_LOCATION, location.getPl_place());
 
         editor.putString(KEY_IDLOCATION, locationID);
+
+        // commit changes
+        editor.commit();
+    }
+
+    public void createBalanceSession(String emplcode, int period, Boolean update){
+        DBHandlerTINV_RAA sqlRAA = new DBHandlerTINV_RAA();
+        DBHandlerTINV_RAAActual sqlRAAActual = new DBHandlerTINV_RAAActual();
+        int RAABalance, RAAActualBalance, remains;
+//        sqlitePeriod.checkPeriod();
+//        Log.d(Integer.toString(sqlitePeriod.checkPeriod()), "createBalanceSession: ");
+
+        RAABalance = sqlRAA.getBalance(emplcode, period, _context);
+        RAAActualBalance = sqlRAAActual.getBalance(emplcode, _context);
+        if (update){
+            remains = RAABalance - 1;
+        } else {
+            remains = RAABalance - RAAActualBalance;
+        }
+
+        // Storing location in pref
+        editor.putString(KEY_REMAINS, Integer.toString(remains));
+
+        editor.putString(KEY_ALL, Integer.toString(RAABalance));
 
         // commit changes
         editor.commit();
@@ -130,6 +162,11 @@ public class SessionManager {
         user.put(KEY_LOCATION, pref.getString(KEY_LOCATION, null));
 
         user.put(KEY_IDLOCATION, pref.getString(KEY_IDLOCATION, null));
+
+        // Location
+        user.put(KEY_REMAINS, pref.getString(KEY_REMAINS, null));
+
+        user.put(KEY_ALL, pref.getString(KEY_ALL, null));
 
         // return user
         return user;

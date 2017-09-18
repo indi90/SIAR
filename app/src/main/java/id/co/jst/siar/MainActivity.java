@@ -1,14 +1,13 @@
 package id.co.jst.siar;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,17 +16,17 @@ import android.widget.Toast;
 import com.facebook.stetho.Stetho;
 import com.google.zxing.integration.android.IntentIntegrator;
 
-import id.co.jst.siar.Helpers.Helpers;
-
-import java.net.NetworkInterface;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import id.co.jst.siar.Helpers.sql.DBHandlerTINV_RAAPeriod;
+import id.co.jst.siar.Helpers.sqlite.DBHandlerRAAPeriod;
+import id.co.jst.siar.Models.sql.TINV_RAAPeriodModel;
+import id.co.jst.siar.Models.sqlite.RAAPeriodModel;
 
 public class MainActivity extends AppCompatActivity {
     public Button btn_submit_pic, btn_scan_barcode;
     public EditText pic_barcode;
-    SessionManager session;
+    private SessionManager session;
+    private DBHandlerTINV_RAAPeriod sqlRAAPeriod = new DBHandlerTINV_RAAPeriod();
+    private DBHandlerRAAPeriod sqliteRAAPeriod = new DBHandlerRAAPeriod(MainActivity.this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         Stetho.initializeWithDefaults(this);
         setContentView(R.layout.activity_main);
 
-        session = new SessionManager(getApplicationContext());
+        session = new SessionManager(this);
 
         btn_submit_pic = (Button)findViewById(R.id.button2);
         btn_scan_barcode = (Button)findViewById(R.id.button);
@@ -47,8 +46,7 @@ public class MainActivity extends AppCompatActivity {
         pdg.setCanceledOnTouchOutside(true);
         pdg.setMessage("Please Wait ...");
         pdg.setCancelable(false);
-
-//        Toast.makeText(MainActivity.this, Helpers.getMAC(),Toast.LENGTH_LONG).show();
+        sqliteRAAPeriod.truncatePeriod();
 
         btn_scan_barcode.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,39 +61,48 @@ public class MainActivity extends AppCompatActivity {
         btn_submit_pic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            final String pic = pic_barcode.getText().toString();
-            if (pic.isEmpty()){
-                Toast.makeText(MainActivity.this, "PIC Barcode Harus Diisi.",Toast.LENGTH_LONG).show();
-            } else {
-                new AsyncTask<Void, Void, Void>() {
-                    @Override
-                    protected void onPreExecute() {
-                        pdg.show();
-                    }
+                final int activePeriod = sqlRAAPeriod.getPeriodCount(MainActivity.this);
+                if (activePeriod > 0){
+                    final String pic = pic_barcode.getText().toString();
+                    TINV_RAAPeriodModel period = sqlRAAPeriod.getActivePeriod(MainActivity.this);
+//                    RAAPeriodModel sqlitePeriod = new RAAPeriodModel(period.getIRPID(), period.getIRPPeriod(), period.getIRPYear(), period.getIRPMonth(), period.getIRPStatus(), period.getIRPGenerateDate(), period.getIRPInventoryOpen(), period.getIRPInventoryClose());
+                    sqliteRAAPeriod.addPeriod(new RAAPeriodModel(period.getIRPID(), period.getIRPPeriod(), period.getIRPYear(), period.getIRPMonth(), period.getIRPStatus(), period.getIRPGenerateDate(), period.getIRPInventoryOpen(), period.getIRPInventoryClose()));
+                    if (pic.isEmpty()){
+                        Toast.makeText(MainActivity.this, "PIC Barcode Harus Diisi.",Toast.LENGTH_LONG).show();
+                    } else {
+                        new AsyncTask<Void, Void, Void>() {
+                            @Override
+                            protected void onPreExecute() {
+                                pdg.show();
+                            }
 
-                    protected Void doInBackground(Void... params) {
-                        final String message = session.createPICSession(pic, MainActivity.this);
-                        pdg.dismiss();
-                        if (message != null){
-                            runOnUiThread(new Runnable(){
-                                @Override
-                                public void run(){
-                                    Toast.makeText(MainActivity.this, message,Toast.LENGTH_LONG).show();
+                            protected Void doInBackground(Void... params) {
+                                final String message = session.createPICSession(pic);
+                                pdg.dismiss();
+                                if (message != null){
+                                    runOnUiThread(new Runnable(){
+                                        @Override
+                                        public void run(){
+                                            Toast.makeText(MainActivity.this, message,Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                } else {
+                                    runOnUiThread(new Runnable(){
+                                        @Override
+                                        public void run(){
+                                            session.createBalanceSession(pic, sqliteRAAPeriod.checkPeriod(), false);
+                                            Intent i = new Intent(getApplicationContext(), MenuActivity.class);
+                                            startActivity(i);
+                                        }
+                                    });
                                 }
-                            });
-                        } else {
-                            runOnUiThread(new Runnable(){
-                                @Override
-                                public void run(){
-                                    Intent i = new Intent(getApplicationContext(), MenuActivity.class);
-                                    startActivity(i);
-                                }
-                            });
-                        }
-                        return null;
+                                return null;
+                            }
+                        }.execute();
                     }
-                }.execute();
-            }
+                } else {
+                    Toast.makeText(MainActivity.this, "Periode Inventory Tidak Tersedia.",Toast.LENGTH_LONG).show();
+                }
             }
         });
     }

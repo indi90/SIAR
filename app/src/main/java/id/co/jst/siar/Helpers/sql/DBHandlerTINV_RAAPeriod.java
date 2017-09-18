@@ -2,11 +2,8 @@ package id.co.jst.siar.Helpers.sql;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.os.StrictMode;
 import android.util.Log;
 import android.widget.Toast;
-
-import java.sql.DriverManager;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -15,30 +12,33 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import id.co.jst.siar.Models.sql.TBMFAPlaceModel;
+import id.co.jst.siar.MainActivity;
+import id.co.jst.siar.Models.sql.TINV_RAAPeriodModel;
+
+import static android.R.attr.data;
 
 /**
- * Created by endro.ngujiharto on 4/6/2017.
+ * Created by endro.ngujiharto on 9/13/2017.
  */
 
-public class DBHandlerTBMFAPlace {
+public class DBHandlerTINV_RAAPeriod {
     // Database Name
     private static final String DATABASE_NAME = "JSTACCFINDB";
     // Contacts table name
-    private static final String TABLE = "TBMFA_FAPlace";
+    private static final String TABLE = "TINV_RAAPeriod";
 
     private Connection connect;
     private ResultSet rs;
-    private ProgressDialog mDialog;
     private  DBHandlerConnection sqlConnect = new DBHandlerConnection();
 
-    // Getting locations Count
-    public int getPlacesCount(Context activity) {
+    // Getting period Count
+    public int getPeriodCount(Context activity) {
         int count = 0;
         String z = "";
 
         connect = sqlConnect.connect(DATABASE_NAME);
-        String countQuery = "SELECT COUNT(*) FROM " + TABLE;
+//        Log.d(Connection.(connect), "Connect : ");
+        String countQuery = "SELECT COUNT(*) FROM " + TABLE + " WHERE IRPStatus = 1";
         if (connect == null)
         {
             z = "Check Your Connection!";
@@ -58,12 +58,12 @@ public class DBHandlerTBMFAPlace {
         return count;
     }
 
-    // Getting All Locations
-    public List<TBMFAPlaceModel> getAllPlaces(Context activity) {
-        List<TBMFAPlaceModel> placeList = new ArrayList<TBMFAPlaceModel>();
+    // Getting Active Period
+    public TINV_RAAPeriodModel getActivePeriod(Context activity) {
+        TINV_RAAPeriodModel period = new TINV_RAAPeriodModel();
         connect = sqlConnect.connect(DATABASE_NAME);
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE;
+        String selectQuery = "SELECT IRPID,IRPPeriod,IRPYear,IRPMonth,IRPStatus,IRPGenerateDate,IRPInventoryOpen,IRPInventoryClose FROM " + TABLE + " WHERE IRPStatus = 1";
         String z = "";
         if (connect == null)
         {
@@ -73,24 +73,14 @@ public class DBHandlerTBMFAPlace {
             try {
                 Statement statement = connect.createStatement();
                 rs = statement.executeQuery(selectQuery);
-                while (rs.next()) {
-                    TBMFAPlaceModel place = new TBMFAPlaceModel();
-                    place.setPl_code(Integer.parseInt(rs.getString(1)));
-                    place.setPl_building(rs.getString(2));
-                    place.setPl_floor(rs.getString(3));
-                    place.setPl_place(rs.getString(4));
-                    place.setPl_description(rs.getString(5));
-                    // Adding to list
-                    placeList.add(place);
-                }
+                rs.next();
+                period = new TINV_RAAPeriodModel(rs.getInt(1), rs.getInt(2), rs.getInt(3), rs.getInt(4), rs.getInt(5), rs.getString(6), rs.getString(7), rs.getString(8));
                 connect.close();
             } catch (SQLException e) {
                 Toast.makeText(activity, e.getMessage().toString(), Toast.LENGTH_LONG).show();
             }
         }
-
         // return contact list
-        return placeList;
+        return period;
     }
-
 }

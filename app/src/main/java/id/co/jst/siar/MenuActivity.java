@@ -22,6 +22,7 @@ import id.co.jst.siar.Helpers.sqlite.DBHandlerLocations;
 import id.co.jst.siar.Helpers.sql.DBHandlerTBMFAPlace;
 import id.co.jst.siar.Helpers.sqlite.DBHandlerRAA;
 import id.co.jst.siar.Helpers.sqlite.DBHandlerRAAActual;
+import id.co.jst.siar.Helpers.sqlite.DBHandlerRAAPeriod;
 import id.co.jst.siar.Models.sql.TINV_RAAActualModel;
 import id.co.jst.siar.Models.sql.TINV_RAAModel;
 import id.co.jst.siar.Models.sqlite.LocationModel;
@@ -34,6 +35,7 @@ public class MenuActivity extends AppCompatActivity {
     private DBHandlerLocations sqliteLocation = new DBHandlerLocations(this);
     private DBHandlerRAA sqliteRAA = new DBHandlerRAA(this);
     private DBHandlerRAAActual sqliteRAAActual = new DBHandlerRAAActual(this);
+    private DBHandlerRAAPeriod sqliteRAAPeriod = new DBHandlerRAAPeriod(this);
     private DBHandlerTBMFAPlace sqlPlace = new DBHandlerTBMFAPlace();
     private DBHandlerTINV_RAA sqlRAA = new DBHandlerTINV_RAA();
     private DBHandlerTINV_RAAActual sqlRAAActual = new DBHandlerTINV_RAAActual();
@@ -52,7 +54,7 @@ public class MenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
-        session = new SessionManager(getApplicationContext());
+        session = new SessionManager(this);
 
         // get user data from session
         final HashMap<String, String> user = session.getUserDetails();
@@ -123,7 +125,7 @@ public class MenuActivity extends AppCompatActivity {
             new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected void onPreExecute() {
-                    RAAs = sqlRAA.getAllRAA(user.get(SessionManager.KEY_EMPLCODE),MenuActivity.this);
+                    RAAs = sqlRAA.getAllRAA(user.get(SessionManager.KEY_EMPLCODE), 1,MenuActivity.this);
                     if (RAAs.isEmpty()){
                         pdg.dismiss();
                     }
@@ -139,7 +141,7 @@ public class MenuActivity extends AppCompatActivity {
                             }
                         }
 
-                        if (sqliteRAA.getRAACount() == sqlRAA.getRAACount(MenuActivity.this)){
+                        if (sqliteRAA.getRAACount() == sqlRAA.getRAACount(user.get(SessionManager.KEY_EMPLCODE), 1,MenuActivity.this)){
                             pdg.dismiss();
                             // To dismiss the dialog
                             runOnUiThread(new Runnable(){

@@ -33,20 +33,12 @@ public class DBHandlerRAA extends DBHandlerSQLite {
         values.put(KEY_IRMODEL, raa.getIRModel());
         values.put(KEY_IRMFGNO, raa.getIRMFGNo());
         values.put(KEY_IRLOCATIONID, raa.getIRLocationID());
-        values.put(KEY_IRGENERATEDATE, raa.getIRGenerateDate().toString());
+        values.put(KEY_IRGENERATEDATE, raa.getIRGenerateDate());
         values.put(KEY_IRGENERATEUSER, raa.getIRGenerateUser());
         values.put(KEY_IRDEPTCODE, raa.getIRDeptCode());
         // Inserting Row
         db.insert(super.TABLE_RAA, null, values);
         db.close(); // Closing database connection
-    }
-
-    // Deleting a shop
-    public void deleteLocation(RAAModel raa) {
-        String deleteQuery = "DELETE FROM " + super.TABLE_RAA + " WHERE " + KEY_IRASSETNO + " = " + raa.getIRAssetNo() + " AND " + KEY_IRPERIODID + " = " + raa.getIRPeriodID();
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL(deleteQuery);
-        db.close();
     }
 
     // Getting RAA Count
@@ -65,11 +57,6 @@ public class DBHandlerRAA extends DBHandlerSQLite {
         SQLiteDatabase db = this.getReadableDatabase();
         db.execSQL(truncateQuery);
         db.close();
-//        Log.d("Reading: ", "Count Test ..." + rs.next());
-//        Cursor cursor = db.rawQuery(countQuery, null);
-
-        // return count
-//        return cursor.getCount();
     }
 
     // Getting one raa
@@ -91,7 +78,6 @@ public class DBHandlerRAA extends DBHandlerSQLite {
             raa.setIRAssetNo(cursor.getInt(0));
             raa.setIRModel(cursor.getString(1));
             raa.setIRMFGNo(cursor.getString(2));
-//        Log.d("Insert: ", "Inserting .."+cursor.);
             location.setPl_place(cursor.getString(3));
             objects = new Object[]{raa,location};
             success = true;

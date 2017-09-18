@@ -16,6 +16,7 @@ public class DBHandlerSQLite extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     // Database Name
     private static final String DATABASE_NAME = "SIAR.db";
+
     // Location table name
     protected static final String TABLE_LOCATION = "Locations";
     // Location Table Columns names
@@ -25,6 +26,7 @@ public class DBHandlerSQLite extends SQLiteOpenHelper {
     protected static final String KEY_PLACE = "pl_place";
     protected static final String KEY_DESCRIPTION = "pl_description";
     protected static final String KEY_DATE = "pl_date";
+
     // RAA Table names
     protected static final String TABLE_RAA = "RAA";
     // RAA Table Columns names
@@ -36,8 +38,21 @@ public class DBHandlerSQLite extends SQLiteOpenHelper {
     protected static final String KEY_IRGENERATEDATE = "IRGenerateDate";
     protected static final String KEY_IRGENERATEUSER = "IRGenerateUser";
     protected static final String KEY_IRDEPTCODE = "IRDeptCode";
+
     // RAAACTUAL table name
     protected static final String TABLE_RAAACTUAL = "RAAACTUAL";
+
+    // RAA Period Table names
+    protected static final String TABLE_RAAPERIOD = "RAAPeriod";
+    // RAA Period Columns names
+    protected static final String KEY_IRPID = "IRPID";
+    protected static final String KEY_IRPPERIOD = "IRPPeriod";
+    protected static final String KEY_IRPYEAR = "IRPYear";
+    protected static final String KEY_IRPMONTH = "IRPMonth";
+    protected static final String KEY_IRPSTATUS = "IRPStatus";
+    protected static final String KEY_IRPGENERATEDATE = "IRPGenerateDate";
+    protected static final String KEY_IRPINVENTORYOPEN = "IRPInventoryOpen";
+    protected static final String KEY_IRPINVENTORYCLOSE = "IRPInventoryClose";
 
     // Table Create Statements
     // Location table create statement
@@ -62,7 +77,7 @@ public class DBHandlerSQLite extends SQLiteOpenHelper {
             + "PRIMARY KEY ("+ KEY_IRPERIODID +", "+ KEY_IRASSETNO +")"
             + ")";
 
-    // RAA table create statement
+    // RAA Actual table create statement
     private static final String CREATE_RAAACTUAL_TABLE = "CREATE TABLE " + TABLE_RAAACTUAL + " ("
             + KEY_IRPERIODID + " INTEGER,"
             + KEY_IRASSETNO + " INTEGER,"
@@ -75,6 +90,19 @@ public class DBHandlerSQLite extends SQLiteOpenHelper {
             + "PRIMARY KEY ("+ KEY_IRPERIODID +", "+ KEY_IRASSETNO +")"
             + ")";
 
+    // RAA Period table create statement
+    private static final String CREATE_RAAPERIOD_TABLE = "CREATE TABLE " + TABLE_RAAPERIOD + " ("
+            + KEY_IRPID + " INTEGER,"
+            + KEY_IRPPERIOD + " INTEGER,"
+            + KEY_IRPYEAR + " INTEGER,"
+            + KEY_IRPMONTH + " INTEGER,"
+            + KEY_IRPSTATUS + " INTEGER,"
+            + KEY_IRPGENERATEDATE + " DATE,"
+            + KEY_IRPINVENTORYOPEN + " DATE,"
+            + KEY_IRPINVENTORYCLOSE + " DATE,"
+            + "PRIMARY KEY ("+ KEY_IRPID +")"
+            + ")";
+
     public DBHandlerSQLite(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -85,6 +113,7 @@ public class DBHandlerSQLite extends SQLiteOpenHelper {
         db.execSQL(CREATE_RAAACTUAL_TABLE);
         db.execSQL(CREATE_RAA_TABLE);
         db.execSQL(CREATE_LOCATION_TABLE);
+        db.execSQL(CREATE_RAAPERIOD_TABLE);
     }
 
     @Override
@@ -93,6 +122,7 @@ public class DBHandlerSQLite extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_RAAACTUAL);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_RAA);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCATION);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_RAAPERIOD);
         // Creating tables again
         onCreate(db);
     }
