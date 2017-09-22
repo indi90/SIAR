@@ -1,6 +1,7 @@
 package id.co.jst.siar.Helpers.sql;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.sql.Connection;
@@ -8,35 +9,38 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import id.co.jst.siar.Models.sql.TINV_RAAModel;
+import id.co.jst.siar.SessionManager;
 
 /**
  * Created by endro.ngujiharto on 4/7/2017.
  */
 
-public class DBHandlerTINV_RAA {
+public class DBHandlerTINV_RAA{
     private static final String DATABASE_NAME = "JSTACCFINDB";
     // Contacts table name
     private static final String TABLE = "TINV_RAA";
-
     private Connection connect;
     private ResultSet rs;
     private DBHandlerConnection sqlConnect = new DBHandlerConnection();
 
     // Getting Balance
-    public int getBalance(String emplcode, int period, Context activity) {
+    public int getBalance(String dept, String sec, int period, Context activity) {
         int count = 0;
         String z = "";
 
         connect = sqlConnect.connect(DATABASE_NAME);
-        String  countQuery = "SELECT count(*) FROM " + TABLE + " WHERE IRDeptCode = (SELECT Section_ID" +
-                "  FROM TBMST_Section INNER JOIN  TBMST_SectionDet" +
-                "  ON Section_ID = SED_HeaderID INNER JOIN jincommon..tbmst_employee" +
-                "  ON em_sectioncode = sed_sectioncode" +
-                "  WHERE em_emplcode = " + emplcode + "" +
-                "  AND IRPeriodID = " + period +")";
+        String  countQuery = "SELECT count(*) FROM " + TABLE + " WHERE IRDeptCode BETWEEN (SELECT min(sec_sectioncode)" +
+                "  FROM jincommon..tbmst_employee INNER JOIN jincommon..tbmst_section" +
+                "  ON em_sectioncode = sec_sectioncode and sec_status = 1" +
+                "  WHERE sec_department = '" + dept + "')" +
+                "  AND (SELECT max(sec_sectioncode) FROM jincommon..tbmst_employee INNER JOIN jincommon..tbmst_section" +
+                "  ON em_sectioncode = sec_sectioncode and sec_status = 1" +
+                "  WHERE sec_department = '" + dept + "')" +
+                "  AND IRPeriodID = " + period;
         if (connect == null)
         {
             z = "Check Your Connection!";
@@ -58,17 +62,19 @@ public class DBHandlerTINV_RAA {
     }
 
     // Getting locations Count
-    public int getRAACount(String emplcode, int period, Context activity) {
+    public int getRAACount(String dept, String sec, int period, Context activity) {
         int count = 0;
         String z = "";
 
         connect = sqlConnect.connect(DATABASE_NAME);
-        String countQuery = "SELECT COUNT(*) FROM " + TABLE + " WHERE IRDeptCode = (SELECT Section_ID" +
-                "  FROM TBMST_Section INNER JOIN  TBMST_SectionDet" +
-                "  ON Section_ID = SED_HeaderID INNER JOIN jincommon..tbmst_employee" +
-                "  ON em_sectioncode = sed_sectioncode" +
-                "  WHERE em_emplcode = " + emplcode + "" +
-                "  AND IRPeriodID = " + period +")";
+        String countQuery = "SELECT count(*) FROM " + TABLE + " WHERE IRDeptCode BETWEEN (SELECT min(sec_sectioncode)" +
+                "  FROM jincommon..tbmst_employee INNER JOIN jincommon..tbmst_section" +
+                "  ON em_sectioncode = sec_sectioncode and sec_status = 1" +
+                "  WHERE sec_department = '" + dept + "')" +
+                "  AND (SELECT max(sec_sectioncode) FROM jincommon..tbmst_employee INNER JOIN jincommon..tbmst_section" +
+                "  ON em_sectioncode = sec_sectioncode and sec_status = 1" +
+                "  WHERE sec_department = '" + dept + "')" +
+                "  AND IRPeriodID = " + period;
         if (connect == null)
         {
             z = "Check Your Connection!";
@@ -89,16 +95,18 @@ public class DBHandlerTINV_RAA {
     }
 
     // Getting All Locations
-    public List<TINV_RAAModel> getAllRAA(String emplcode, int period, Context activity) {
+    public List<TINV_RAAModel> getAllRAA(String dept, String sec, int period, Context activity) {
         List<TINV_RAAModel> RAAList = new ArrayList<TINV_RAAModel>();
         connect = sqlConnect.connect(DATABASE_NAME);
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE + " WHERE IRDeptCode = (SELECT Section_ID" +
-                "  FROM TBMST_Section INNER JOIN  TBMST_SectionDet" +
-                "  ON Section_ID = SED_HeaderID INNER JOIN jincommon..tbmst_employee" +
-                "  ON em_sectioncode = sed_sectioncode" +
-                "  WHERE em_emplcode = " + emplcode + "" +
-                "  AND IRPeriodID = " + period +")";
+        String selectQuery = "SELECT * FROM " + TABLE + " WHERE IRDeptCode BETWEEN (SELECT min(sec_sectioncode)" +
+                "  FROM jincommon..tbmst_employee INNER JOIN jincommon..tbmst_section" +
+                "  ON em_sectioncode = sec_sectioncode and sec_status = 1" +
+                "  WHERE sec_department = '" + dept + "')" +
+                "  AND (SELECT max(sec_sectioncode) FROM jincommon..tbmst_employee INNER JOIN jincommon..tbmst_section" +
+                "  ON em_sectioncode = sec_sectioncode and sec_status = 1" +
+                "  WHERE sec_department = '" + dept + "')" +
+                "  AND IRPeriodID = " + period;
         String z = "";
         if (connect == null) {
             z = "Check Your Connection!";

@@ -71,16 +71,20 @@ public class DBHandlerTINV_RAAActual {
         return kembali;
     }
 
-    public int getBalance(String emplcode, Context activity) {
+    public int getBalance(String dept, String sec, int period, Context activity) {
         int count = 0;
         String z = "";
 
         connect = sqlConnect.connect(DATABASE_NAME);
-        String  countQuery = "SELECT count(*) FROM " + TABLE + " WHERE IRDeptCode = (SELECT Section_ID" +
-                "  FROM TBMST_Section INNER JOIN  TBMST_SectionDet" +
-                "  ON Section_ID = SED_HeaderID INNER JOIN jincommon..tbmst_employee" +
-                "  ON em_sectioncode = sed_sectioncode" +
-                "  WHERE em_emplcode = " + emplcode + ")";
+        String  countQuery = "SELECT count(*) FROM " + TABLE + " WHERE IRDeptCode BETWEEN (SELECT min(sec_sectioncode)" +
+                "  FROM jincommon..tbmst_employee INNER JOIN jincommon..tbmst_section" +
+                "  ON em_sectioncode = sec_sectioncode and sec_status = 1" +
+                "  WHERE sec_department = '" + dept + "')" +
+                "  AND (SELECT max(sec_sectioncode) FROM jincommon..tbmst_employee INNER JOIN jincommon..tbmst_section" +
+                "  ON em_sectioncode = sec_sectioncode and sec_status = 1" +
+                "  WHERE sec_department = '" + dept + "')" +
+                "  AND IRPeriodID = " + period;
+
         if (connect == null)
         {
             z = "Check Your Connection!";
@@ -102,16 +106,19 @@ public class DBHandlerTINV_RAAActual {
     }
 
     // Getting locations Count
-    public int getRAAActualCount(String emplcode, Context activity) {
+    public int getRAAActualCount(String dept, String sec, int period, Context activity) {
         int count = 0;
         String z = "";
 
         connect = sqlConnect.connect(DATABASE_NAME);
-        String countQuery = "SELECT COUNT(*) FROM " + TABLE + " WHERE IRDeptCode = (SELECT Section_ID" +
-                "  FROM TBMST_Section INNER JOIN  TBMST_SectionDet" +
-                "  ON Section_ID = SED_HeaderID INNER JOIN jincommon..tbmst_employee" +
-                "  ON em_sectioncode = sed_sectioncode" +
-                "  WHERE em_emplcode = " + emplcode + ")";
+        String countQuery = "SELECT count(*) FROM " + TABLE + " WHERE IRDeptCode BETWEEN (SELECT min(sec_sectioncode)" +
+                "  FROM jincommon..tbmst_employee INNER JOIN jincommon..tbmst_section" +
+                "  ON em_sectioncode = sec_sectioncode and sec_status = 1" +
+                "  WHERE sec_department = '" + dept + "')" +
+                "  AND (SELECT max(sec_sectioncode) FROM jincommon..tbmst_employee INNER JOIN jincommon..tbmst_section" +
+                "  ON em_sectioncode = sec_sectioncode and sec_status = 1" +
+                "  WHERE sec_department = '" + dept + "')" +
+                "  AND IRPeriodID = " + period;
         if (connect == null)
         {
             z = "Check Your Connection!";
@@ -132,15 +139,18 @@ public class DBHandlerTINV_RAAActual {
     }
 
     // Getting All RAAActual
-    public List<TINV_RAAActualModel> getAllRAAActual(String emplcode, Context activity) {
+    public List<TINV_RAAActualModel> getAllRAAActual(String dept, String sec, int period, Context activity) {
         List<TINV_RAAActualModel> RAAActualList = new ArrayList<TINV_RAAActualModel>();
         connect = sqlConnect.connect(DATABASE_NAME);
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE + " WHERE IRDeptCode = (SELECT Section_ID" +
-                "  FROM TBMST_Section INNER JOIN  TBMST_SectionDet" +
-                "  ON Section_ID = SED_HeaderID INNER JOIN jincommon..tbmst_employee" +
-                "  ON em_sectioncode = sed_sectioncode" +
-                "  WHERE em_emplcode = " + emplcode + ")";
+        String selectQuery = "SELECT * FROM " + TABLE + " WHERE IRDeptCode BETWEEN (SELECT min(sec_sectioncode)" +
+                "  FROM jincommon..tbmst_employee INNER JOIN jincommon..tbmst_section" +
+                "  ON em_sectioncode = sec_sectioncode and sec_status = 1" +
+                "  WHERE sec_department = '" + dept + "')" +
+                "  AND (SELECT max(sec_sectioncode) FROM jincommon..tbmst_employee INNER JOIN jincommon..tbmst_section" +
+                "  ON em_sectioncode = sec_sectioncode and sec_status = 1" +
+                "  WHERE sec_department = '" + dept + "')" +
+                "  AND IRPeriodID = " + period;
         String z = "";
         if (connect == null)
         {

@@ -29,10 +29,10 @@ public class DBHandlerTBMST_Employee {
 
     // Getting employee
     public String[] getEmployee(String EmplCode, Context activity) {
-        String[] data = new String[2];
+        String[] data = new String[7];
 
         connect = sqlConnect.connect(DATABASE_NAME);
-        String Query = "SELECT EM_EmplCode, EM_EmplName FROM " + TABLE + " WHERE EM_EmplCode = " + EmplCode;
+        String Query = "SELECT em_emplCode, em_emplname, em_sectioncode, sec_sectionnaming, sec_departmentnaming, sec_department, sec_section FROM " + TABLE + " inner JOIN TBMST_SECTION ON em_sectioncode = sec_sectioncode WHERE EM_EmplCode = " + EmplCode +" and sec_status = 1";
         if (connect == null)
         {
             message[0] = "Check Your Connection!";
@@ -43,6 +43,11 @@ public class DBHandlerTBMST_Employee {
                 rs.next();
                 data[0] = rs.getString(1);
                 data[1] = rs.getString(2);
+                data[2] = rs.getString(3);
+                data[3] = rs.getString(4);
+                data[4] = rs.getString(5);
+                data[5] = rs.getString(6);
+                data[6] = rs.getString(7);
                 connect.close();
                 success = true;
             } catch (SQLException e) {

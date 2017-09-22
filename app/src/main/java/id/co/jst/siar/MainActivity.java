@@ -16,6 +16,8 @@ import android.widget.Toast;
 import com.facebook.stetho.Stetho;
 import com.google.zxing.integration.android.IntentIntegrator;
 
+import java.util.HashMap;
+
 import id.co.jst.siar.Helpers.sql.DBHandlerTINV_RAAPeriod;
 import id.co.jst.siar.Helpers.sqlite.DBHandlerRAAPeriod;
 import id.co.jst.siar.Models.sql.TINV_RAAPeriodModel;
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         session = new SessionManager(this);
+        final HashMap<String, String> user = session.getUserDetails();
 
         btn_submit_pic = (Button)findViewById(R.id.button2);
         btn_scan_barcode = (Button)findViewById(R.id.button);
@@ -90,7 +93,8 @@ public class MainActivity extends AppCompatActivity {
                                     runOnUiThread(new Runnable(){
                                         @Override
                                         public void run(){
-                                            session.createBalanceSession(pic, sqliteRAAPeriod.checkPeriod(), false);
+                                            session.createBalanceSession(user.get(SessionManager.KEY_DEPARTMENT), user.get(SessionManager.KEY_SECTION), sqliteRAAPeriod.checkPeriod(), false);
+//                                            Toast.makeText(MainActivity.this, user.get(SessionManager.KEY_SECTION),Toast.LENGTH_LONG).show();
                                             Intent i = new Intent(getApplicationContext(), MenuActivity.class);
                                             startActivity(i);
                                         }

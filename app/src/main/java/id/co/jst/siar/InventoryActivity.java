@@ -109,7 +109,7 @@ public class InventoryActivity extends AppCompatActivity {
                         return null;
                     }
                 }.execute();
-                session.createBalanceSession(user.get(SessionManager.KEY_EMPLCODE), sqliteRAAPeriod.checkPeriod(), true);
+                session.createBalanceSession(user.get(SessionManager.KEY_DEPARTMENT), user.get(SessionManager.KEY_SECTION),sqliteRAAPeriod.checkPeriod(), true);
                 asset_number.setText("");
                 model.setText("");
                 serial_number.setText("");

@@ -125,7 +125,7 @@ public class MenuActivity extends AppCompatActivity {
             new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected void onPreExecute() {
-                    RAAs = sqlRAA.getAllRAA(user.get(SessionManager.KEY_EMPLCODE), 1,MenuActivity.this);
+                    RAAs = sqlRAA.getAllRAA(user.get(SessionManager.KEY_DEPARTMENT), user.get(SessionManager.KEY_SECTION), sqliteRAAPeriod.checkPeriod(),MenuActivity.this);
                     if (RAAs.isEmpty()){
                         pdg.dismiss();
                     }
@@ -141,7 +141,7 @@ public class MenuActivity extends AppCompatActivity {
                             }
                         }
 
-                        if (sqliteRAA.getRAACount() == sqlRAA.getRAACount(user.get(SessionManager.KEY_EMPLCODE), 1,MenuActivity.this)){
+                        if (sqliteRAA.getRAACount() == sqlRAA.getRAACount(user.get(SessionManager.KEY_DEPARTMENT), user.get(SessionManager.KEY_SECTION), sqliteRAAPeriod.checkPeriod(),MenuActivity.this)){
                             pdg.dismiss();
                             // To dismiss the dialog
                             runOnUiThread(new Runnable(){
@@ -153,6 +153,16 @@ public class MenuActivity extends AppCompatActivity {
                                 }
                             });
                         }
+                    } else {
+                        runOnUiThread(new Runnable(){
+
+                            @Override
+                            public void run(){
+                                //update ui here
+                                Toast.makeText(MenuActivity.this, "Data Inventory Belum diGenerate", Toast.LENGTH_LONG).show();
+                            }
+                        });
+
                     }
                     return null;
                 }
