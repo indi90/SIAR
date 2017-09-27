@@ -28,7 +28,7 @@ public class DBHandlerTBMST_Employee {
     private String[] message = new String[1];
 
     // Getting employee
-    public String[] getEmployee(String EmplCode, Context activity) {
+    public String[] getEmployee(String EmplCode) {
         String[] data = new String[7];
 
         connect = sqlConnect.connect(DATABASE_NAME);
@@ -48,6 +48,35 @@ public class DBHandlerTBMST_Employee {
                 data[4] = rs.getString(5);
                 data[5] = rs.getString(6);
                 data[6] = rs.getString(7);
+                connect.close();
+                success = true;
+            } catch (SQLException e) {
+                message[0] = e.getMessage();
+            }
+        }
+
+        if (success){
+            return data;
+        } else {
+            return message;
+        }
+    }
+
+    public String[] checkBarcode(String barcode){
+        String[] data = new String[2];
+        connect = sqlConnect.connect(DATABASE_NAME);
+        String Query = "SELECT AMU_MINVRAA, amu_employeeno FROM TBAM_User WHERE AMU_QRCode = '" + barcode + "'";
+
+        if (connect == null)
+        {
+            message[0] = "Check Your Connection!";
+        } else {
+            try {
+                Statement statement = connect.createStatement();
+                rs = statement.executeQuery(Query);
+                rs.next();
+                data[0] = rs.getString(1);
+                data[1] = rs.getString(2);
                 connect.close();
                 success = true;
             } catch (SQLException e) {

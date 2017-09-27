@@ -18,16 +18,20 @@ import com.google.zxing.integration.android.IntentIntegrator;
 
 import java.util.HashMap;
 
+import id.co.jst.siar.Helpers.sql.DBHandlerTBMST_Employee;
 import id.co.jst.siar.Helpers.sql.DBHandlerTINV_RAAPeriod;
 import id.co.jst.siar.Helpers.sqlite.DBHandlerRAAPeriod;
 import id.co.jst.siar.Models.sql.TINV_RAAPeriodModel;
 import id.co.jst.siar.Models.sqlite.RAAPeriodModel;
+
+import static android.R.id.message;
 
 public class MainActivity extends AppCompatActivity {
     public Button btn_submit_pic, btn_scan_barcode;
     public EditText pic_barcode;
     private SessionManager session;
     private DBHandlerTINV_RAAPeriod sqlRAAPeriod = new DBHandlerTINV_RAAPeriod();
+    private DBHandlerTBMST_Employee sqlTBMSTEmployee = new DBHandlerTBMST_Employee();
     private DBHandlerRAAPeriod sqliteRAAPeriod = new DBHandlerRAAPeriod(MainActivity.this);
 
     @Override
@@ -55,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
             IntentIntegrator integrator = new IntentIntegrator(MainActivity.this);
-            integrator.setDesiredBarcodeFormats(IntentIntegrator.ONE_D_CODE_TYPES);
+            integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
             Intent intent = integrator.createScanIntent();
             startActivityForResult(intent, 0);
             }
@@ -64,9 +68,9 @@ public class MainActivity extends AppCompatActivity {
         btn_submit_pic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final String pic = pic_barcode.getText().toString();
                 final int activePeriod = sqlRAAPeriod.getPeriodCount(MainActivity.this);
                 if (activePeriod > 0){
-                    final String pic = pic_barcode.getText().toString();
                     TINV_RAAPeriodModel period = sqlRAAPeriod.getActivePeriod(MainActivity.this);
 //                    RAAPeriodModel sqlitePeriod = new RAAPeriodModel(period.getIRPID(), period.getIRPPeriod(), period.getIRPYear(), period.getIRPMonth(), period.getIRPStatus(), period.getIRPGenerateDate(), period.getIRPInventoryOpen(), period.getIRPInventoryClose());
                     sqliteRAAPeriod.addPeriod(new RAAPeriodModel(period.getIRPID(), period.getIRPPeriod(), period.getIRPYear(), period.getIRPMonth(), period.getIRPStatus(), period.getIRPGenerateDate(), period.getIRPInventoryOpen(), period.getIRPInventoryClose()));
@@ -80,26 +84,53 @@ public class MainActivity extends AppCompatActivity {
                             }
 
                             protected Void doInBackground(Void... params) {
-                                final String message = session.createPICSession(pic);
-                                pdg.dismiss();
-                                if (message != null){
+                                final String[] barcode = sqlTBMSTEmployee.checkBarcode(pic);
+                                if(barcode.length < 2){
                                     runOnUiThread(new Runnable(){
                                         @Override
                                         public void run(){
-                                            Toast.makeText(MainActivity.this, message,Toast.LENGTH_LONG).show();
+                                            if(barcode[0].equals("No current row in the ResultSet.")){
+                                                Toast.makeText(MainActivity.this, "Barcode Tidak Terdaftar.",Toast.LENGTH_LONG).show();
+                                            } else {
+                                                Toast.makeText(MainActivity.this, barcode[0],Toast.LENGTH_LONG).show();
+                                            }
                                         }
                                     });
+                                    pdg.dismiss();
                                 } else {
-                                    runOnUiThread(new Runnable(){
-                                        @Override
-                                        public void run(){
-                                            session.createBalanceSession(user.get(SessionManager.KEY_DEPARTMENT), user.get(SessionManager.KEY_SECTION), sqliteRAAPeriod.checkPeriod(), false);
+                                    if (barcode[0].equals("0")){
+                                        runOnUiThread(new Runnable(){
+                                            @Override
+                                            public void run(){
+                                                Toast.makeText(MainActivity.this, "Maaf, Barcode Anda Tidak Dapat Digunakan.",Toast.LENGTH_LONG).show();
+                                            }
+                                        });
+                                        pdg.dismiss();
+                                    } else {
+                                        final String message = session.createPICSession(barcode[1]);
+                                        pdg.dismiss();
+                                        if (message != null){
+                                            runOnUiThread(new Runnable(){
+                                                @Override
+                                                public void run(){
+                                                    Toast.makeText(MainActivity.this, message,Toast.LENGTH_LONG).show();
+                                                }
+                                            });
+                                        } else {
+                                            runOnUiThread(new Runnable(){
+                                                @Override
+                                                public void run(){
+                                                    session.createBalanceSession(user.get(SessionManager.KEY_DEPARTMENT), user.get(SessionManager.KEY_SECTION), sqliteRAAPeriod.checkPeriod(), false);
+//                                                    Log.d("Trial :",user.get(SessionManager.KEY_REMAINS));
 //                                            Toast.makeText(MainActivity.this, user.get(SessionManager.KEY_SECTION),Toast.LENGTH_LONG).show();
-                                            Intent i = new Intent(getApplicationContext(), MenuActivity.class);
-                                            startActivity(i);
+                                                    Intent i = new Intent(getApplicationContext(), MenuActivity.class);
+                                                    startActivity(i);
+                                                }
+                                            });
                                         }
-                                    });
+                                    }
                                 }
+
                                 return null;
                             }
                         }.execute();

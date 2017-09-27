@@ -28,6 +28,8 @@ import id.co.jst.siar.Models.sqlite.LocationModel;
 import id.co.jst.siar.Models.sqlite.RAAActualModel;
 import id.co.jst.siar.Models.sqlite.RAAModel;
 
+import static java.lang.Integer.parseInt;
+
 public class InventoryActivity extends AppCompatActivity {
     public Button btn_scan, btn_submit, btn_done;
     private EditText raa_barcode;
@@ -58,6 +60,7 @@ public class InventoryActivity extends AppCompatActivity {
         btn_submit = (Button)findViewById(R.id.button11);
         balance = (TextView)findViewById(R.id.textView2);
 
+        Log.d("Trial ",user.get(SessionManager.KEY_REMAINS));
         balance.setText(user.get(SessionManager.KEY_REMAINS) + " of " + user.get(SessionManager.KEY_ALL));
         locationActual.setText(" " + user.get(SessionManager.KEY_LOCATION));
         pic.setText(" " + user.get(SessionManager.KEY_EMPLCODE) + " - " + user.get(SessionManager.KEY_NAME));
@@ -105,16 +108,19 @@ public class InventoryActivity extends AppCompatActivity {
                     @Override
                     protected Void doInBackground(Void... params) {
                         RAAModel RAA = sqliteRAA.getRAAforRAAActual(barcode);
-                        sqliteRAAActual.addRAAActual(new RAAActualModel(RAA.getIRPeriodID(), RAA.getIRAssetNo(), RAA.getIRModel(), RAA.getIRMFGNo(), Integer.parseInt(user.get(SessionManager.KEY_IDLOCATION)), RAA.getIRGenerateDate(), RAA.getIRGenerateUser(), RAA.getIRDeptCode()));
+                        sqliteRAAActual.addRAAActual(new RAAActualModel(RAA.getIRPeriodID(), RAA.getIRAssetNo(), RAA.getIRModel(), RAA.getIRMFGNo(), parseInt(user.get(SessionManager.KEY_IDLOCATION)), RAA.getIRGenerateDate(), RAA.getIRGenerateUser(), RAA.getIRDeptCode()));
                         return null;
                     }
                 }.execute();
-                session.createBalanceSession(user.get(SessionManager.KEY_DEPARTMENT), user.get(SessionManager.KEY_SECTION),sqliteRAAPeriod.checkPeriod(), true);
+                int remains = Integer.parseInt(user.get(SessionManager.KEY_REMAINS)) - 1;
+                int b = Integer.parseInt(user.get(SessionManager.KEY_ALL));
                 asset_number.setText("");
                 model.setText("");
                 serial_number.setText("");
                 location.setText("");
                 raa_barcode.setText("");
+                session.updateBalanceSession(b, remains);
+                balance.setText(remains + " of " + user.get(SessionManager.KEY_ALL));
                 Toast.makeText(InventoryActivity.this, "Berhasil Menambah Data", Toast.LENGTH_LONG).show();
             }
         });
@@ -127,7 +133,7 @@ public class InventoryActivity extends AppCompatActivity {
             switch (requestCode) {
                 case 0:
                     raa_barcode.setText(content);
-                    Object[] result = sqliteRAA.getRAA(Integer.parseInt(content.substring(4)));
+                    Object[] result = sqliteRAA.getRAA(parseInt(content.substring(4)));
                     Log.d("result length", Integer.toString(result.length));
                     if (result.length < 2){
                         Toast.makeText(InventoryActivity.this, result[0].toString(), Toast.LENGTH_LONG).show();
@@ -136,7 +142,7 @@ public class InventoryActivity extends AppCompatActivity {
                         model.setText(" " + ((RAAModel)result[0]).getIRModel());
                         serial_number.setText(" " + ((RAAModel)result[0]).getIRMFGNo());
                         location.setText(" " + ((LocationModel)result[1]).getPl_place());
-                        barcode = Integer.parseInt(content.substring(4));
+                        barcode = parseInt(content.substring(4));
                     }
                     break;
             }

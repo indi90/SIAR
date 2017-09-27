@@ -76,7 +76,7 @@ public class SessionManager {
     public String createPICSession(String emplcode){
         String[] employee;
 
-        employee = sqlEmployee.getEmployee(emplcode, _context);
+        employee = sqlEmployee.getEmployee(emplcode);
 
         if (employee.length < 2 ){
             return employee[0];
@@ -117,24 +117,32 @@ public class SessionManager {
         editor.commit();
     }
 
-    public void createBalanceSession(String dept, String sec, int period, Boolean update){
+    public void createBalanceSession(String dept, String sec, int period){
         DBHandlerTINV_RAA sqlRAA = new DBHandlerTINV_RAA();
         DBHandlerTINV_RAAActual sqlRAAActual = new DBHandlerTINV_RAAActual();
-        int RAABalance, RAAActualBalance, remains;
+        int RAABalance, RAAActualBalance, remains = 0;
 //        sqlitePeriod.checkPeriod();
 //        Log.d(Integer.toString(sqlitePeriod.checkPeriod()), "createBalanceSession: ");
 
         RAABalance = sqlRAA.getBalance(dept, sec, period, _context);
         RAAActualBalance = sqlRAAActual.getBalance(dept, sec, period, _context);
-        if (update){
-            remains = RAABalance - 1;
-        } else {
-            remains = RAABalance - RAAActualBalance;
-        }
+
+        remains = RAABalance - RAAActualBalance;
+
         // Storing location in pref
         editor.putString(KEY_REMAINS, Integer.toString(remains));
 
         editor.putString(KEY_ALL, Integer.toString(RAABalance));
+
+        // commit changes
+        editor.commit();
+    }
+
+    public void updateBalanceSession(int balance, int remains){
+        // Storing location in pref
+        editor.putString(KEY_REMAINS, Integer.toString(remains));
+
+        editor.putString(KEY_ALL, Integer.toString(balance));
 
         // commit changes
         editor.commit();

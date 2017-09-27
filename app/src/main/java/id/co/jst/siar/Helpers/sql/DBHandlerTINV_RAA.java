@@ -41,6 +41,8 @@ public class DBHandlerTINV_RAA{
                 "  ON em_sectioncode = sec_sectioncode and sec_status = 1" +
                 "  WHERE sec_department = '" + dept + "')" +
                 "  AND IRPeriodID = " + period;
+
+//        Log.d("Trial :", countQuery);
         if (connect == null)
         {
             z = "Check Your Connection!";
