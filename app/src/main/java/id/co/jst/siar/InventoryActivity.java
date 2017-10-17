@@ -38,6 +38,7 @@ public class InventoryActivity extends AppCompatActivity {
     private DBHandlerRAAActual sqliteRAAActual = new DBHandlerRAAActual(this);
     private DBHandlerRAAPeriod sqliteRAAPeriod = new DBHandlerRAAPeriod(this);
     private Integer barcode;
+    private int remains;
     SessionManager session;
 
     @Override
@@ -60,8 +61,9 @@ public class InventoryActivity extends AppCompatActivity {
         btn_submit = (Button)findViewById(R.id.button11);
         balance = (TextView)findViewById(R.id.textView2);
 
-        Log.d("Trial ",user.get(SessionManager.KEY_REMAINS));
+//        Log.d("Trial ",user.get(SessionManager.KEY_REMAINS));
         balance.setText(user.get(SessionManager.KEY_REMAINS) + " of " + user.get(SessionManager.KEY_ALL));
+        remains = Integer.parseInt(user.get(SessionManager.KEY_REMAINS));
         locationActual.setText(" " + user.get(SessionManager.KEY_LOCATION));
         pic.setText(" " + user.get(SessionManager.KEY_EMPLCODE) + " - " + user.get(SessionManager.KEY_NAME));
 
@@ -112,14 +114,13 @@ public class InventoryActivity extends AppCompatActivity {
                         return null;
                     }
                 }.execute();
-                int remains = Integer.parseInt(user.get(SessionManager.KEY_REMAINS)) - 1;
-                int b = Integer.parseInt(user.get(SessionManager.KEY_ALL));
+                remains = remains - 1;
                 asset_number.setText("");
                 model.setText("");
                 serial_number.setText("");
                 location.setText("");
                 raa_barcode.setText("");
-                session.updateBalanceSession(b, remains);
+                session.updateBalanceSession(remains);
                 balance.setText(remains + " of " + user.get(SessionManager.KEY_ALL));
                 Toast.makeText(InventoryActivity.this, "Berhasil Menambah Data", Toast.LENGTH_LONG).show();
             }
@@ -130,10 +131,12 @@ public class InventoryActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (resultCode < 0) {
             String content = intent.getStringExtra("SCAN_RESULT");
+            int asseno = Integer.parseInt(content);
+            Log.d("trial", Integer.toString(asseno));
             switch (requestCode) {
                 case 0:
                     raa_barcode.setText(content);
-                    Object[] result = sqliteRAA.getRAA(parseInt(content.substring(4)));
+                    Object[] result = sqliteRAA.getRAA(asseno);
                     Log.d("result length", Integer.toString(result.length));
                     if (result.length < 2){
                         Toast.makeText(InventoryActivity.this, result[0].toString(), Toast.LENGTH_LONG).show();

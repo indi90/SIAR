@@ -26,21 +26,26 @@ public class DBHandlerTINV_RAA{
     private Connection connect;
     private ResultSet rs;
     private DBHandlerConnection sqlConnect = new DBHandlerConnection();
+    private String cond = "";
 
     // Getting Balance
-    public int getBalance(String dept, String sec, int period, Context activity) {
+    public int getBalance(String dept, String div, int period, Context activity) {
         int count = 0;
         String z = "";
 
         connect = sqlConnect.connect(DATABASE_NAME);
+        if (!div.equals("Logistic Control Division")){
+            cond = "  AND sec_department = '" + dept + "'";
+        }
         String  countQuery = "SELECT count(*) FROM " + TABLE + " WHERE IRDeptCode BETWEEN (SELECT min(sec_sectioncode)" +
-                "  FROM jincommon..tbmst_employee INNER JOIN jincommon..tbmst_section" +
-                "  ON em_sectioncode = sec_sectioncode and sec_status = 1" +
-                "  WHERE sec_department = '" + dept + "')" +
-                "  AND (SELECT max(sec_sectioncode) FROM jincommon..tbmst_employee INNER JOIN jincommon..tbmst_section" +
-                "  ON em_sectioncode = sec_sectioncode and sec_status = 1" +
-                "  WHERE sec_department = '" + dept + "')" +
-                "  AND IRPeriodID = " + period;
+                "  FROM jincommon..tbmst_section" +
+                "  WHERE  sec_status = 1 and SEC_DIVISION = '" + div + "' "+
+                cond +
+                "  ) AND (SELECT max(sec_sectioncode)" +
+                "  FROM jincommon..tbmst_section" +
+                "  WHERE  sec_status = 1 and SEC_DIVISION = '" + div + "' "+
+                cond +
+                " ) AND IRPeriodID = " + period;
 
 //        Log.d("Trial :", countQuery);
         if (connect == null)
@@ -64,19 +69,23 @@ public class DBHandlerTINV_RAA{
     }
 
     // Getting locations Count
-    public int getRAACount(String dept, String sec, int period, Context activity) {
+    public int getRAACount(String dept, String div, int period, Context activity) {
         int count = 0;
         String z = "";
 
         connect = sqlConnect.connect(DATABASE_NAME);
+        if (!div.equals("Logistic Control Division")){
+            cond = "  AND sec_department = '" + dept + "'";
+        }
         String countQuery = "SELECT count(*) FROM " + TABLE + " WHERE IRDeptCode BETWEEN (SELECT min(sec_sectioncode)" +
-                "  FROM jincommon..tbmst_employee INNER JOIN jincommon..tbmst_section" +
-                "  ON em_sectioncode = sec_sectioncode and sec_status = 1" +
-                "  WHERE sec_department = '" + dept + "')" +
-                "  AND (SELECT max(sec_sectioncode) FROM jincommon..tbmst_employee INNER JOIN jincommon..tbmst_section" +
-                "  ON em_sectioncode = sec_sectioncode and sec_status = 1" +
-                "  WHERE sec_department = '" + dept + "')" +
-                "  AND IRPeriodID = " + period;
+                "  FROM jincommon..tbmst_section" +
+                "  WHERE  sec_status = 1 and SEC_DIVISION = '" + div + "' "+
+                cond +
+                "  ) AND (SELECT max(sec_sectioncode)" +
+                "  FROM jincommon..tbmst_section" +
+                "  WHERE  sec_status = 1 and SEC_DIVISION = '" + div + "' "+
+                cond +
+                "  ) AND IRPeriodID = " + period;
         if (connect == null)
         {
             z = "Check Your Connection!";
@@ -97,18 +106,25 @@ public class DBHandlerTINV_RAA{
     }
 
     // Getting All Locations
-    public List<TINV_RAAModel> getAllRAA(String dept, String sec, int period, Context activity) {
+    public List<TINV_RAAModel> getAllRAA(String dept, String div, int period, Context activity) {
         List<TINV_RAAModel> RAAList = new ArrayList<TINV_RAAModel>();
         connect = sqlConnect.connect(DATABASE_NAME);
+
+        if (!div.equals("Logistic Control Division")){
+            cond = "  AND sec_department = '" + dept + "'";
+        }
         // Select All Query
         String selectQuery = "SELECT * FROM " + TABLE + " WHERE IRDeptCode BETWEEN (SELECT min(sec_sectioncode)" +
-                "  FROM jincommon..tbmst_employee INNER JOIN jincommon..tbmst_section" +
-                "  ON em_sectioncode = sec_sectioncode and sec_status = 1" +
-                "  WHERE sec_department = '" + dept + "')" +
-                "  AND (SELECT max(sec_sectioncode) FROM jincommon..tbmst_employee INNER JOIN jincommon..tbmst_section" +
-                "  ON em_sectioncode = sec_sectioncode and sec_status = 1" +
-                "  WHERE sec_department = '" + dept + "')" +
-                "  AND IRPeriodID = " + period;
+                "  FROM jincommon..tbmst_section" +
+                "  WHERE  sec_status = 1 and SEC_DIVISION = '" + div + "' "+
+                cond +
+                "  ) AND (SELECT max(sec_sectioncode)" +
+                "  FROM jincommon..tbmst_section" +
+                "  WHERE  sec_status = 1 and SEC_DIVISION = '" + div + "' "+
+                cond +
+                "  ) AND IRPeriodID = " + period;
+
+        Log.d("trial", selectQuery);
         String z = "";
         if (connect == null) {
             z = "Check Your Connection!";

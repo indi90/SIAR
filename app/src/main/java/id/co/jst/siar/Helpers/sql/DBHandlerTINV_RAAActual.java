@@ -38,6 +38,7 @@ public class DBHandlerTINV_RAAActual {
     // Adding new RAA
     public String[] addRAAActual(TINV_RAAActualModel raaActual, Context activity) {
         String[] kembali;
+        String[] tmp;
         connect = sqlConnect.connect(DATABASE_NAME);
         String insertQuery = "INSERT INTO " + TABLE + " (IRPeriodID, IRAssetNo, IRModel, IRMFGNo, IRLocationID, IRGenerateDate, IRGenerateUser, IRDeptCode) VALUES ('" +
                 raaActual.getIRPeriodID() +
@@ -61,10 +62,38 @@ public class DBHandlerTINV_RAAActual {
                 kembali = new String[]{""};
             } catch (SQLException e) {
                 if (e.getErrorCode() == 2627){
-                    message = "";
+                    tmp = this.updateRAAActual(raaActual, activity);
+                    message = tmp[0];
                 } else {
                     message = e.getMessage();
                 }
+                kembali = new String[]{message};
+            }
+        }
+        return kembali;
+    }
+
+    // Update RAA
+    public String[] updateRAAActual(TINV_RAAActualModel raaActual, Context activity) {
+        String[] kembali;
+        connect = sqlConnect.connect(DATABASE_NAME);
+        String insertQuery = "UPDATE " + TABLE + " SET IRLocationID = " +
+                raaActual.getIRLocationID() +
+                " WHERE IRAssetNo = " +
+                raaActual.getIRAssetNo();
+        if (connect == null)
+        {
+            message = "Check Your Connection!";
+            kembali = new String[]{message};
+        } else {
+            try {
+                PreparedStatement statement = connect.prepareStatement(insertQuery);
+                statement.executeUpdate();
+
+                connect.close();
+                kembali = new String[]{""};
+            } catch (SQLException e) {
+                message = e.getMessage();
                 kembali = new String[]{message};
             }
         }

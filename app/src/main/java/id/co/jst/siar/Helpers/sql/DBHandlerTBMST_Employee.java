@@ -29,10 +29,10 @@ public class DBHandlerTBMST_Employee {
 
     // Getting employee
     public String[] getEmployee(String EmplCode) {
-        String[] data = new String[7];
+        String[] data = new String[8];
 
         connect = sqlConnect.connect(DATABASE_NAME);
-        String Query = "SELECT em_emplCode, em_emplname, em_sectioncode, sec_sectionnaming, sec_departmentnaming, sec_department, sec_section FROM " + TABLE + " inner JOIN TBMST_SECTION ON em_sectioncode = sec_sectioncode WHERE EM_EmplCode = " + EmplCode +" and sec_status = 1";
+        String Query = "SELECT em_emplCode, em_emplname, em_sectioncode, sec_sectionnaming, sec_departmentnaming, sec_department, sec_section, SEC_DIVISION FROM " + TABLE + " inner JOIN TBMST_SECTION ON em_sectioncode = sec_sectioncode WHERE EM_EmplCode = " + EmplCode +" and sec_status = 1";
         if (connect == null)
         {
             message[0] = "Check Your Connection!";
@@ -48,6 +48,7 @@ public class DBHandlerTBMST_Employee {
                 data[4] = rs.getString(5);
                 data[5] = rs.getString(6);
                 data[6] = rs.getString(7);
+                data[7] = rs.getString(8);
                 connect.close();
                 success = true;
             } catch (SQLException e) {

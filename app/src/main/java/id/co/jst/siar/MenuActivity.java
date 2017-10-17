@@ -125,7 +125,7 @@ public class MenuActivity extends AppCompatActivity {
             new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected void onPreExecute() {
-                    RAAs = sqlRAA.getAllRAA(user.get(SessionManager.KEY_DEPARTMENT), user.get(SessionManager.KEY_SECTION), sqliteRAAPeriod.checkPeriod(),MenuActivity.this);
+                    RAAs = sqlRAA.getAllRAA(user.get(SessionManager.KEY_DEPARTMENT), user.get(SessionManager.KEY_DIVISION), sqliteRAAPeriod.checkPeriod(),MenuActivity.this);
                     if (RAAs.isEmpty()){
                         pdg.dismiss();
                     }
@@ -136,12 +136,12 @@ public class MenuActivity extends AppCompatActivity {
                         sqliteRAA.truncateRAA();
                         if (sqliteRAA.getRAACount() == 0) {
                             for (TINV_RAAModel RAA : RAAs){
-//                            Log.d("Insert: ", "Inserting .."+RAA.getIRAssetNo()+" "+RAA.getIRLocationID());
+                            Log.d("Insert: ", "Inserting .."+RAA.getIRAssetNo()+" "+RAA.getIRLocationID());
                                 sqliteRAA.addRAA(new RAAModel(RAA.getIRPeriodID(), RAA.getIRAssetNo(), RAA.getIRModel(), RAA.getIRMFGNo(), RAA.getIRLocationID(), RAA.getIRGenerateDate(), RAA.getIRGenerateUser(), RAA.getIRDeptCode()));
                             }
                         }
 
-                        if (sqliteRAA.getRAACount() == sqlRAA.getRAACount(user.get(SessionManager.KEY_DEPARTMENT), user.get(SessionManager.KEY_SECTION), sqliteRAAPeriod.checkPeriod(),MenuActivity.this)){
+                        if (sqliteRAA.getRAACount() == sqlRAA.getRAACount(user.get(SessionManager.KEY_DEPARTMENT), user.get(SessionManager.KEY_DIVISION), sqliteRAAPeriod.checkPeriod(),MenuActivity.this)){
                             pdg.dismiss();
                             // To dismiss the dialog
                             runOnUiThread(new Runnable(){

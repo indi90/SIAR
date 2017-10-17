@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         session = new SessionManager(this);
-        final HashMap<String, String> user = session.getUserDetails();
 
         btn_submit_pic = (Button)findViewById(R.id.button2);
         btn_scan_barcode = (Button)findViewById(R.id.button);
@@ -120,7 +119,9 @@ public class MainActivity extends AppCompatActivity {
                                             runOnUiThread(new Runnable(){
                                                 @Override
                                                 public void run(){
-                                                    session.createBalanceSession(user.get(SessionManager.KEY_DEPARTMENT), user.get(SessionManager.KEY_SECTION), sqliteRAAPeriod.checkPeriod(), false);
+//                                                    Log.d("Trial :",user.get(SessionManager.KEY_DIVISION));
+                                                    final HashMap<String, String> user = session.getUserDetails();
+                                                    session.createBalanceSession(user.get(SessionManager.KEY_DEPARTMENT), user.get(SessionManager.KEY_DIVISION), sqliteRAAPeriod.checkPeriod());
 //                                                    Log.d("Trial :",user.get(SessionManager.KEY_REMAINS));
 //                                            Toast.makeText(MainActivity.this, user.get(SessionManager.KEY_SECTION),Toast.LENGTH_LONG).show();
                                                     Intent i = new Intent(getApplicationContext(), MenuActivity.class);

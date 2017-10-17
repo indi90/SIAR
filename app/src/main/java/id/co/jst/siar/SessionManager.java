@@ -58,6 +58,7 @@ public class SessionManager {
     public static final String KEY_DEPARTMETNAME = "departmentname";
     public static final String KEY_DEPARTMENT = "department";
     public static final String KEY_SECTION = "section";
+    public static final String KEY_DIVISION = "division";
 
     private DBHandlerTBMST_Employee sqlEmployee = new DBHandlerTBMST_Employee();
 
@@ -78,6 +79,8 @@ public class SessionManager {
 
         employee = sqlEmployee.getEmployee(emplcode);
 
+        Log.d("trial", employee[7]);
+
         if (employee.length < 2 ){
             return employee[0];
         } else {
@@ -94,6 +97,7 @@ public class SessionManager {
             editor.putString(KEY_DEPARTMETNAME, employee[4]);
             editor.putString(KEY_DEPARTMENT, employee[5]);
             editor.putString(KEY_SECTION, employee[6]);
+            editor.putString(KEY_DIVISION, employee[7]);
 
             // commit changes
             editor.commit();
@@ -117,15 +121,15 @@ public class SessionManager {
         editor.commit();
     }
 
-    public void createBalanceSession(String dept, String sec, int period){
+    public void createBalanceSession(String dept, String div, int period){
         DBHandlerTINV_RAA sqlRAA = new DBHandlerTINV_RAA();
         DBHandlerTINV_RAAActual sqlRAAActual = new DBHandlerTINV_RAAActual();
         int RAABalance, RAAActualBalance, remains = 0;
 //        sqlitePeriod.checkPeriod();
 //        Log.d(Integer.toString(sqlitePeriod.checkPeriod()), "createBalanceSession: ");
 
-        RAABalance = sqlRAA.getBalance(dept, sec, period, _context);
-        RAAActualBalance = sqlRAAActual.getBalance(dept, sec, period, _context);
+        RAABalance = sqlRAA.getBalance(dept, div, period, _context);
+        RAAActualBalance = sqlRAAActual.getBalance(dept, div, period, _context);
 
         remains = RAABalance - RAAActualBalance;
 
@@ -138,11 +142,9 @@ public class SessionManager {
         editor.commit();
     }
 
-    public void updateBalanceSession(int balance, int remains){
+    public void updateBalanceSession(int remains){
         // Storing location in pref
         editor.putString(KEY_REMAINS, Integer.toString(remains));
-
-        editor.putString(KEY_ALL, Integer.toString(balance));
 
         // commit changes
         editor.commit();
@@ -185,6 +187,8 @@ public class SessionManager {
         user.put(KEY_DEPARTMENT, pref.getString(KEY_DEPARTMENT, null));
 
         user.put(KEY_SECTION, pref.getString(KEY_SECTION, null));
+
+        user.put(KEY_DIVISION, pref.getString(KEY_DIVISION, null));
 
         // Location
         user.put(KEY_REMAINS, pref.getString(KEY_REMAINS, null));
