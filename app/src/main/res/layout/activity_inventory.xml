@@ -82,13 +82,14 @@
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/button8"
         android:layout_alignRight="@+id/button8"
-        android:layout_alignTop="@+id/textView8"
         android:layout_toEndOf="@+id/textView8"
         android:layout_toRightOf="@+id/textView8"
         android:height="45dp"
         android:fontFamily="casual"
         android:gravity="left|center_vertical"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:layout_below="@+id/textView9"
+        android:layout_above="@+id/button8" />
 
     <EditText
         android:id="@+id/editText2"
