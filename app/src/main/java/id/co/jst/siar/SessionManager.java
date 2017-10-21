@@ -109,11 +109,13 @@ public class SessionManager {
     public void createLocationSession(String locationID){
         DBHandlerLocations sqliteLocation = new DBHandlerLocations(_context);
         LocationModel location;
+        String Loc;
 
         location = sqliteLocation.getLocation(locationID);
 
+        Loc = location.getPl_floor()+" - Phase "+location.getPl_building()+" - "+location.getPl_place();
         // Storing location in pref
-        editor.putString(KEY_LOCATION, location.getPl_place());
+        editor.putString(KEY_LOCATION, Loc);
 
         editor.putString(KEY_IDLOCATION, locationID);
 
