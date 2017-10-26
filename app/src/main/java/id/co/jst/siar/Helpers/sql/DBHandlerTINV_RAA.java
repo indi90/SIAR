@@ -34,7 +34,7 @@ public class DBHandlerTINV_RAA{
         String z = "";
 
         connect = sqlConnect.connect(DATABASE_NAME);
-        if (!div.equals("Logistic Control Division")){
+        if (!div.equals("Logistic Control Division") && !div.equals("Administration Division")){
             cond = "  AND sec_department = '" + dept + "'";
         }
         String  countQuery = "SELECT count(*) FROM " + TABLE + " WHERE IRDeptCode BETWEEN (SELECT min(sec_sectioncode)" +
@@ -74,7 +74,7 @@ public class DBHandlerTINV_RAA{
         String z = "";
 
         connect = sqlConnect.connect(DATABASE_NAME);
-        if (!div.equals("Logistic Control Division")){
+        if (!div.equals("Logistic Control Division") && !div.equals("Administration Division")){
             cond = "  AND sec_department = '" + dept + "'";
         }
         String countQuery = "SELECT count(*) FROM " + TABLE + " WHERE IRDeptCode BETWEEN (SELECT min(sec_sectioncode)" +
@@ -110,7 +110,7 @@ public class DBHandlerTINV_RAA{
         List<TINV_RAAModel> RAAList = new ArrayList<TINV_RAAModel>();
         connect = sqlConnect.connect(DATABASE_NAME);
 
-        if (!div.equals("Logistic Control Division")){
+        if (!div.equals("Logistic Control Division") && !div.equals("Administration Division")){
             cond = "  AND sec_department = '" + dept + "'";
         }
         // Select All Query
