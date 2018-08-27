@@ -7,7 +7,7 @@ System Inventory RAA for PT. JST Indoensia
 A step by step for use this repository
 
 ```
-git clone git@gitlab.jst.co.id:JIN-MobileApps/SIAR.git SIAR
+git clone https://github.com/indi90/SIAR.git SIAR
 ```
 
 ## Built With
